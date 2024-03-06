@@ -38,6 +38,11 @@ dependencies:
   math_expressions: ^2.4.0
   money2: ^4.1.0
   intl: ^0.19.0
+  objectbox: ^2.5.1
+  objectbox_flutter_libs: any
+  go_router: ^13.2.0
+  provider: ^6.1.2
+  path_provider: ^2.1.2
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +54,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  build_runner: ^2.4.8
+  objectbox_generator: any
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

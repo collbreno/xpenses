@@ -1,12 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:objectbox/objectbox.dart';
+import 'package:provider/provider.dart';
+import 'package:xpenses/entities/tag_entity.dart';
+import 'package:xpenses/object_box.dart';
+import 'package:xpenses/pages/home_page.dart';
+import 'package:xpenses/pages/new_expense_page.dart';
 import 'package:xpenses/pages/new_tag.dart';
+import 'package:xpenses/pages/tags_page.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final objectBox = await ObjectBox.create();
+  runApp(MyApp(objectBox));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final ObjectBox objectBox;
+  MyApp(this.objectBox, {super.key});
+
+  final _router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (context, state) => const HomePage(),
+      ),
+      GoRoute(
+        path: '/new_tag',
+        builder: (context, state) => const NewTagPage(),
+      ),
+      GoRoute(
+        path: '/new_expense',
+        builder: (context, state) => const NewExpensePage(),
+      ),
+      GoRoute(
+        path: '/tags',
+        builder: (context, state) => const TagsPage(),
+      )
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -26,19 +59,22 @@ class MyApp extends StatelessWidget {
       onError: Colors.white,
     );
 
-    return MaterialApp(
-      title: 'Xpenses',
-      theme: ThemeData(
-        colorScheme: colorScheme,
-        useMaterial3: true,
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.primary,
-            foregroundColor: colorScheme.onPrimary,
+    return Provider<Box<Tag>>(
+      create: (context) => objectBox.store.box<Tag>(),
+      child: MaterialApp.router(
+        title: 'Xpenses',
+        theme: ThemeData(
+          colorScheme: colorScheme,
+          useMaterial3: true,
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+            ),
           ),
         ),
+        routerConfig: _router,
       ),
-      home: const NewTagPage(),
     );
   }
 }
