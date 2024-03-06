@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xpenses/pages/home_page.dart';
-import 'package:xpenses/pages/new_expense_page.dart';
-import 'package:xpenses/pages/theme_visualizer.dart';
+import 'package:xpenses/pages/new_tag.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +38,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const ThemeVisualizer(),
+      home: const NewTagPage(),
     );
   }
 }

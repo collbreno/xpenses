@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:math_expressions/math_expressions.dart';
+import 'package:money2/money2.dart';
+import 'package:xpenses/constants.dart';
 
 class Calculator extends StatefulWidget {
   const Calculator({super.key});
@@ -94,7 +96,11 @@ class _CalculatorState extends State<Calculator> {
                       _evaluate();
                     });
                     if (!_hasError) {
-                      Navigator.pop(context, _result);
+                      Navigator.pop(
+                        context,
+                        Money.fromNumWithCurrency(
+                            double.parse(_result), Constants.currency),
+                      );
                     } else if (_result.isEmpty) {
                       Navigator.pop(context);
                     }
@@ -187,8 +193,8 @@ class _CalculatorState extends State<Calculator> {
   }
 }
 
-Future<String?> showCalculator(BuildContext context) {
-  return showDialog<String>(
+Future<Money?> showCalculator(BuildContext context) {
+  return showDialog<Money>(
     context: context,
     builder: (context) {
       return const Calculator();
