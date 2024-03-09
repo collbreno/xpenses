@@ -4,16 +4,19 @@ import 'package:xpenses/utils/color_utils.dart';
 class TagChip extends StatelessWidget {
   final String text;
   final Color color;
+  final Alignment alignment;
 
   const TagChip({
     super.key,
     required this.text,
     required this.color,
+    this.alignment = Alignment.center,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Align(
+      alignment: alignment,
       child: Container(
         constraints: const BoxConstraints(
           maxWidth: 200,
@@ -27,7 +30,7 @@ class TagChip extends StatelessWidget {
           color: color,
         ),
         child: FittedBox(
-          alignment: Alignment.center,
+          alignment: alignment,
           child: text.isEmpty
               ? null
               : Text(

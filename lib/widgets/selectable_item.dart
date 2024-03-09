@@ -4,11 +4,13 @@ class SelectableItem extends StatelessWidget {
   final Widget child;
   final bool selected;
   final VoidCallback onTap;
+  final Alignment alignment;
   const SelectableItem({
     super.key,
     required this.child,
     required this.selected,
     required this.onTap,
+    this.alignment = Alignment.center,
   });
 
   @override
@@ -16,7 +18,7 @@ class SelectableItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Stack(
-        alignment: Alignment.center,
+        alignment: alignment,
         children: [
           child,
           if (selected) const Icon(Icons.check),

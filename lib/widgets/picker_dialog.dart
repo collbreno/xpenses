@@ -8,12 +8,14 @@ class PickerDialog<T> extends StatefulWidget {
   final ItemBuilder<T> itemBuilder;
   final int columns;
   final T? initialValue;
+  final Alignment checkPosition;
   const PickerDialog({
     super.key,
     required this.itemBuilder,
     required this.items,
     this.initialValue,
     this.columns = 1,
+    this.checkPosition = Alignment.center,
   });
 
   @override
@@ -36,42 +38,54 @@ class _PickerDialogState<T> extends State<PickerDialog<T>> {
       content: SizedBox(
         width: double.maxFinite,
         height: 300,
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: widget.columns,
-          ),
-          itemCount: widget.items.length,
-          itemBuilder: (context, index) {
-            final item = widget.items[index];
-            return SelectableItem(
-              selected: item == _selected,
-              onTap: () {
-                setState(() {
-                  _selected = item == _selected ? null : item;
-                });
-              },
-              child: widget.itemBuilder(
-                item,
+        child: widget.columns == 1
+            ? ListView.builder(
+                itemCount: widget.items.length,
+                itemBuilder: _itemBuilder,
+              )
+            : GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: widget.columns,
+                ),
+                itemCount: widget.items.length,
+                itemBuilder: _itemBuilder,
               ),
-            );
-          },
-        ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Cancelar'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context, _selected);
-          },
-          child: Text('Ok'),
-        ),
-      ],
+      actions: _buildActions(),
     );
+  }
+
+  Widget? _itemBuilder(context, index) {
+    final item = widget.items[index];
+    return SelectableItem(
+      alignment: widget.checkPosition,
+      selected: item == _selected,
+      onTap: () {
+        setState(() {
+          _selected = item == _selected ? null : item;
+        });
+      },
+      child: widget.itemBuilder(
+        item,
+      ),
+    );
+  }
+
+  List<Widget> _buildActions() {
+    return [
+      TextButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Text('Cancelar'),
+      ),
+      TextButton(
+        onPressed: () {
+          Navigator.pop(context, _selected);
+        },
+        child: Text('Ok'),
+      ),
+    ];
   }
 }
 
@@ -81,6 +95,7 @@ Future<T?> showPickerDialog<T>({
   required List<T> items,
   T? initialValue,
   int columns = 1,
+  Alignment checkPosition = Alignment.center,
 }) async {
   return showDialog(
     context: context,
@@ -89,6 +104,7 @@ Future<T?> showPickerDialog<T>({
       items: items,
       columns: columns,
       initialValue: initialValue,
+      checkPosition: checkPosition,
     ),
   );
 }
