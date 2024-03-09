@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:provider/provider.dart';
 import 'package:xpenses/entities/tag_entity.dart';
-import 'package:xpenses/object_box.dart';
 import 'package:xpenses/widgets/form_fields/color_form_field.dart';
 import 'package:xpenses/widgets/form_fields/string_form_field.dart';
 import 'package:xpenses/widgets/tag_chip.dart';

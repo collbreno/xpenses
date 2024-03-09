@@ -59,8 +59,10 @@ class MyApp extends StatelessWidget {
       onError: Colors.white,
     );
 
-    return Provider<Box<Tag>>(
-      create: (context) => objectBox.store.box<Tag>(),
+    return MultiProvider(
+      providers: [
+        Provider<Box<Tag>>(create: (context) => objectBox.store.box<Tag>()),
+      ],
       child: MaterialApp.router(
         title: 'Xpenses',
         theme: ThemeData(
