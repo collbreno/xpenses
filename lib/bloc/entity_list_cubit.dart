@@ -8,7 +8,6 @@ class EntityListCubit<T> extends Cubit<AsyncData<List<T>>> {
   }
 
   Future<void> loadData() async {
-    emit(const AsyncData.loading());
     try {
       final result = await method.call();
       emit(AsyncData.withData(result));

@@ -23,7 +23,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(1, 5385091276152244694),
       name: 'Tag',
-      lastPropertyId: const obx_int.IdUid(3, 2957705462550479313),
+      lastPropertyId: const obx_int.IdUid(4, 7767785884469948146),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -40,6 +40,11 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(3, 2957705462550479313),
             name: 'colorCode',
             type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 7767785884469948146),
+            name: 'iconName',
+            type: 9,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
@@ -104,10 +109,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (Tag object, fb.Builder fbb) {
           final nameOffset = fbb.writeString(object.name);
-          fbb.startTable(4);
+          final iconNameOffset = object.iconName == null
+              ? null
+              : fbb.writeString(object.iconName!);
+          fbb.startTable(5);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
           fbb.addInt64(2, object.colorCode);
+          fbb.addOffset(3, iconNameOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -116,7 +125,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final rootOffset = buffer.derefObject(0);
           final nameParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 6, '');
-          final object = Tag(name: nameParam)
+          final iconNameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 10);
+          final object = Tag(name: nameParam, iconName: iconNameParam)
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
             ..colorCode =
                 const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
@@ -139,4 +150,8 @@ class Tag_ {
   /// see [Tag.colorCode]
   static final colorCode =
       obx.QueryIntegerProperty<Tag>(_entities[0].properties[2]);
+
+  /// see [Tag.iconName]
+  static final iconName =
+      obx.QueryStringProperty<Tag>(_entities[0].properties[3]);
 }

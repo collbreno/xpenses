@@ -64,6 +64,7 @@ class TagsPage extends StatelessWidget {
               title: TagChip(
                 color: tag.color,
                 text: tag.name,
+                icon: tag.icon,
               ),
             );
           },

@@ -4,12 +4,14 @@ import 'package:xpenses/utils/color_utils.dart';
 class TagChip extends StatelessWidget {
   final String text;
   final Color color;
+  final IconData? icon;
   final Alignment alignment;
 
   const TagChip({
     super.key,
     required this.text,
     required this.color,
+    this.icon,
     this.alignment = Alignment.center,
   });
 
@@ -21,8 +23,8 @@ class TagChip extends StatelessWidget {
         constraints: const BoxConstraints(
           maxWidth: 200,
           minWidth: 30,
-          minHeight: 18,
-          maxHeight: 18,
+          minHeight: 22,
+          maxHeight: 22,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
@@ -30,16 +32,26 @@ class TagChip extends StatelessWidget {
           color: color,
         ),
         child: FittedBox(
-          alignment: alignment,
-          child: text.isEmpty
-              ? null
-              : Text(
-                  text,
-                  style: TextStyle(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null)
+                Padding(
+                  padding: const EdgeInsets.only(right: 6.0),
+                  child: Icon(
+                    icon,
                     color: color.contrastedColor,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
+              Text(
+                text.isEmpty ? ' ' : text,
+                style: TextStyle(
+                  color: color.contrastedColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
