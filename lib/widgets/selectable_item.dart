@@ -8,7 +8,7 @@ class SelectableItem extends StatelessWidget {
   const SelectableItem({
     super.key,
     required this.child,
-    required this.selected,
+    this.selected = false,
     required this.onTap,
     this.alignment = Alignment.center,
   });

@@ -3,31 +3,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
+import 'package:xpenses/entities/tag_entity.dart';
 import 'package:xpenses/utils/async_data.dart';
 import 'package:xpenses/widgets/picker_dialog.dart';
+import 'package:xpenses/widgets/tag_chip.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class EntityFormField<T> extends FormField<T> {
-  EntityFormField({
-    required Widget Function(T) itemBuilder,
-    ValueChanged? onChanged,
-    Alignment checkPosition = Alignment.center,
+class TagsFormField extends FormField<Iterable<Tag>> {
+  TagsFormField({
+    ValueChanged<Iterable<Tag>>? onChanged,
     super.onSaved,
     super.key,
   }) : super(
+          initialValue: {},
           builder: (formState) {
-            return BlocBuilder<EntityListCubit<T>, AsyncData<List<T>>>(
+            return BlocBuilder<EntityListCubit<Tag>, AsyncData<List<Tag>>>(
               builder: (context, cubitState) {
                 return ListTile(
                   onTap: !cubitState.hasData
                       ? null
                       : () async {
-                          final result = await showPickerDialog(
-                            checkPosition: checkPosition,
+                          final result = await showMultiPickerDialog(
+                            props: PickerDialogProps<Tag>(
+                              checkPosition: Alignment.centerRight,
+                              itemBuilder: (tag) => ListTile(
+                                dense: true,
+                                title: TagChip(
+                                  text: tag.name,
+                                  color: tag.color,
+                                  alignment: Alignment.centerLeft,
+                                ),
+                              ),
+                              columns: 1,
+                              items: cubitState.data!,
+                              onSearch: (item, text) => item.name
+                                  .toUpperCase()
+                                  .contains(text.toUpperCase()),
+                            ),
                             context: context,
-                            columns: 1,
-                            itemBuilder: itemBuilder,
                             initialValue: formState.value,
-                            items: cubitState.data!,
                           );
 
                           if (result != null) {
@@ -36,7 +50,7 @@ class EntityFormField<T> extends FormField<T> {
                           }
                         },
                   title: InputDecorator(
-                    isEmpty: formState.value == null,
+                    isEmpty: formState.value!.isEmpty,
                     decoration: InputDecoration(
                       enabled: cubitState.hasData,
                       icon: const Icon(Icons.label),
@@ -67,9 +81,24 @@ class EntityFormField<T> extends FormField<T> {
                                 )
                               : const Icon(Icons.arrow_drop_down),
                     ),
-                    child: formState.value == null
+                    child: formState.value!.isEmpty
                         ? null
-                        : itemBuilder(formState.value!),
+                        : MasonryGridView.builder(
+                            gridDelegate:
+                                const SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                            ),
+                            mainAxisSpacing: 4,
+                            crossAxisSpacing: 4,
+                            shrinkWrap: true,
+                            itemCount: formState.value!.length,
+                            itemBuilder: (context, index) => Align(
+                              alignment: Alignment.centerLeft,
+                              child: TagChip.fromTag(
+                                formState.value!.toList()[index],
+                              ),
+                            ),
+                          ),
                   ),
                 );
               },

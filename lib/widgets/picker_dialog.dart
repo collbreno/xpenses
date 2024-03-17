@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:xpenses/widgets/selectable_item.dart';
 
-typedef ItemBuilder<T> = Widget Function(T);
-
-class PickerDialog<T> extends StatefulWidget {
+class PickerDialogProps<T> {
   final List<T> items;
   final ItemBuilder<T> itemBuilder;
   final int columns;
-  final T? initialValue;
-  final Alignment checkPosition;
   final bool Function(T item, String text)? onSearch;
-  const PickerDialog({
-    super.key,
-    required this.itemBuilder,
+  final Alignment checkPosition;
+
+  PickerDialogProps({
     required this.items,
-    this.initialValue,
+    required this.itemBuilder,
     this.columns = 1,
     this.onSearch,
     this.checkPosition = Alignment.center,
+  });
+}
+
+typedef ItemBuilder<T> = Widget Function(T);
+
+class PickerDialog<T> extends StatefulWidget {
+  final T? initialValue;
+  final PickerDialogProps<T> props;
+  const PickerDialog({
+    super.key,
+    required this.props,
+    this.initialValue,
   });
 
   @override
@@ -25,18 +33,102 @@ class PickerDialog<T> extends StatefulWidget {
 }
 
 class _PickerDialogState<T> extends State<PickerDialog<T>> {
-  late List<T> _filtered;
   T? _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.initialValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _InnerPickerDialog<T>(
+      isSelected: (item) => _selected == item,
+      onCancel: () => Navigator.of(context).pop(),
+      onConfirm: () => Navigator.of(context).pop(_selected),
+      onItemPressed: (item) {
+        setState(() {
+          _selected = _selected == item ? null : item;
+        });
+      },
+      props: widget.props,
+    );
+  }
+}
+
+class MultiPickerDialog<T> extends StatefulWidget {
+  final Iterable<T> initialValue;
+  final PickerDialogProps<T> props;
+  const MultiPickerDialog({
+    super.key,
+    required this.props,
+    required this.initialValue,
+  });
+
+  @override
+  State<MultiPickerDialog<T>> createState() => _MultiPickerDialogState<T>();
+}
+
+class _MultiPickerDialogState<T> extends State<MultiPickerDialog<T>> {
+  late Set<T> _selected;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = widget.initialValue.toSet();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _InnerPickerDialog<T>(
+      isSelected: (item) => _selected.contains(item),
+      onCancel: () => Navigator.of(context).pop(),
+      onConfirm: () => Navigator.of(context).pop(_selected),
+      onItemPressed: (item) {
+        setState(() {
+          if (_selected.contains(item)) {
+            _selected.remove(item);
+          } else {
+            _selected.add(item);
+          }
+        });
+      },
+      props: widget.props,
+    );
+  }
+}
+
+class _InnerPickerDialog<T> extends StatefulWidget {
+  final ValueSetter<T> onItemPressed;
+  final bool Function(T) isSelected;
+  final PickerDialogProps<T> props;
+  final VoidCallback onCancel;
+  final VoidCallback onConfirm;
+  const _InnerPickerDialog({
+    super.key,
+    required this.onItemPressed,
+    required this.props,
+    required this.onCancel,
+    required this.onConfirm,
+    required this.isSelected,
+  });
+
+  @override
+  State<_InnerPickerDialog<T>> createState() => _InnerPickerDialogState<T>();
+}
+
+class _InnerPickerDialogState<T> extends State<_InnerPickerDialog<T>> {
+  late List<T> _filtered;
   late bool _isSearching;
 
-  bool get searchable => widget.onSearch != null;
+  bool get searchable => widget.props.onSearch != null;
 
   @override
   void initState() {
     super.initState();
     _isSearching = false;
-    _filtered = widget.items.toList();
-    _selected = widget.initialValue;
+    _filtered = widget.props.items.toList();
   }
 
   @override
@@ -46,14 +138,14 @@ class _PickerDialogState<T> extends State<PickerDialog<T>> {
       content: SizedBox(
         width: double.maxFinite,
         height: 300,
-        child: widget.columns == 1
+        child: widget.props.columns == 1
             ? ListView.builder(
                 itemCount: _filtered.length,
                 itemBuilder: _itemBuilder,
               )
             : GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: widget.columns,
+                  crossAxisCount: widget.props.columns,
                 ),
                 itemCount: _filtered.length,
                 itemBuilder: _itemBuilder,
@@ -77,8 +169,8 @@ class _PickerDialogState<T> extends State<PickerDialog<T>> {
                   autofocus: true,
                   decoration: const InputDecoration(hintText: 'Pesquisar'),
                   onChanged: (query) => setState(() {
-                    _filtered = widget.items
-                        .where((item) => widget.onSearch!(item, query))
+                    _filtered = widget.props.items
+                        .where((item) => widget.props.onSearch!(item, query))
                         .toList();
                   }),
                 ),
@@ -86,7 +178,7 @@ class _PickerDialogState<T> extends State<PickerDialog<T>> {
         IconButton(
           onPressed: () => setState(() {
             if (_isSearching) {
-              _filtered = widget.items.toList();
+              _filtered = widget.props.items.toList();
             }
             _isSearching = !_isSearching;
           }),
@@ -110,14 +202,12 @@ class _PickerDialogState<T> extends State<PickerDialog<T>> {
   Widget? _itemBuilder(BuildContext context, int index) {
     final item = _filtered[index];
     return SelectableItem(
-      alignment: widget.checkPosition,
-      selected: item == _selected,
+      alignment: widget.props.checkPosition,
+      selected: widget.isSelected(item),
       onTap: () {
-        setState(() {
-          _selected = item == _selected ? null : item;
-        });
+        widget.onItemPressed(item);
       },
-      child: widget.itemBuilder(
+      child: widget.props.itemBuilder(
         item,
       ),
     );
@@ -126,15 +216,11 @@ class _PickerDialogState<T> extends State<PickerDialog<T>> {
   List<Widget> _buildActions() {
     return [
       TextButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
+        onPressed: widget.onCancel,
         child: Text('Cancelar'),
       ),
       TextButton(
-        onPressed: () {
-          Navigator.pop(context, _selected);
-        },
+        onPressed: widget.onConfirm,
         child: Text('Ok'),
       ),
     ];
@@ -143,22 +229,28 @@ class _PickerDialogState<T> extends State<PickerDialog<T>> {
 
 Future<T?> showPickerDialog<T>({
   required BuildContext context,
-  required ItemBuilder<T> itemBuilder,
-  required List<T> items,
+  required PickerDialogProps<T> props,
   T? initialValue,
-  int columns = 1,
-  Alignment checkPosition = Alignment.center,
-  bool Function(T item, String text)? onSearch,
 }) async {
   return showDialog(
     context: context,
     builder: (context) => PickerDialog<T>(
-      itemBuilder: itemBuilder,
-      items: items,
-      columns: columns,
+      props: props,
       initialValue: initialValue,
-      checkPosition: checkPosition,
-      onSearch: onSearch,
+    ),
+  );
+}
+
+Future<Iterable<T>?> showMultiPickerDialog<T>({
+  required BuildContext context,
+  required PickerDialogProps<T> props,
+  Iterable<T>? initialValue,
+}) async {
+  return showDialog(
+    context: context,
+    builder: (context) => MultiPickerDialog<T>(
+      props: props,
+      initialValue: initialValue ?? <T>{},
     ),
   );
 }

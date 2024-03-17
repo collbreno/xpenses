@@ -16,17 +16,22 @@ class IconFormField extends FormField<String> {
                 return ListTile(
                   onTap: () async {
                     final result = await showPickerDialog<String>(
-                      onSearch: (item, text) =>
-                          item.toUpperCase().contains(text.toUpperCase()),
-                      context: context,
-                      itemBuilder: (iconName) => FittedBox(
-                        child: Icon(
-                          iconMap[iconName],
+                      props: PickerDialogProps(
+                        onSearch: (item, text) {
+                          return item.toUpperCase().contains(
+                                text.toUpperCase(),
+                              );
+                        },
+                        itemBuilder: (iconName) => FittedBox(
+                          child: Icon(
+                            iconMap[iconName],
+                          ),
                         ),
+                        items: MdiIcons.getNames(),
+                        columns: 5,
                       ),
-                      items: MdiIcons.getNames(),
+                      context: context,
                       initialValue: state.value,
-                      columns: 5,
                     );
                     state.didChange(result);
                     onChanged?.call(result);

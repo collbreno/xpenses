@@ -32,5 +32,5 @@ class ColorUtils {
 
 extension ColorUtilsExtension on Color {
   Color get contrastedColor =>
-      computeLuminance() > 0.4 ? Colors.black : Colors.white;
+      computeLuminance() > 0.3 ? Colors.black : Colors.white;
 }

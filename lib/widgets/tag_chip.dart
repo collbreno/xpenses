@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpenses/entities/tag_entity.dart';
 import 'package:xpenses/utils/color_utils.dart';
 
 class TagChip extends StatelessWidget {
@@ -14,6 +15,12 @@ class TagChip extends StatelessWidget {
     this.icon,
     this.alignment = Alignment.center,
   });
+
+  TagChip.fromTag(Tag tag, {super.key})
+      : color = tag.color,
+        text = tag.name,
+        icon = tag.icon,
+        alignment = Alignment.centerLeft;
 
   @override
   Widget build(BuildContext context) {

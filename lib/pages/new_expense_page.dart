@@ -4,10 +4,9 @@ import 'package:objectbox/objectbox.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
 import 'package:xpenses/entities/tag_entity.dart';
 import 'package:xpenses/widgets/form_fields/date_form_field.dart';
-import 'package:xpenses/widgets/form_fields/entity_form_field.dart';
+import 'package:xpenses/widgets/form_fields/tags_form_field.dart';
 import 'package:xpenses/widgets/form_fields/string_form_field.dart';
 import 'package:xpenses/widgets/form_fields/value_form_field.dart';
-import 'package:xpenses/widgets/tag_chip.dart';
 
 class NewExpensePage extends StatefulWidget {
   const NewExpensePage({super.key});
@@ -48,17 +47,7 @@ class _NewExpensePageState extends State<NewExpensePage> {
                       ValueFormField(),
                       DateFormField(),
                       StringFormField(maxLines: 3),
-                      EntityFormField<Tag>(
-                        checkPosition: Alignment.centerRight,
-                        itemBuilder: (tag) => ListTile(
-                          dense: true,
-                          title: TagChip(
-                            text: tag.name,
-                            color: tag.color,
-                            alignment: Alignment.centerLeft,
-                          ),
-                        ),
-                      ),
+                      TagsFormField(),
                     ],
                   ),
                 ),

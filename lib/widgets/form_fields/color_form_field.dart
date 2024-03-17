@@ -19,17 +19,19 @@ class ColorFormField extends FormField<Color> {
                 return ListTile(
                   onTap: () async {
                     final result = await showPickerDialog(
+                      props: PickerDialogProps<Color>(
+                        columns: 5,
+                        items: ColorUtils.getColorList(),
+                        itemBuilder: (color) {
+                          return Icon(
+                            Icons.circle,
+                            color: color,
+                            size: 48,
+                          );
+                        },
+                      ),
                       context: context,
-                      columns: 5,
-                      items: ColorUtils.getColorList(),
                       initialValue: state.value,
-                      itemBuilder: (color) {
-                        return Icon(
-                          Icons.circle,
-                          color: color,
-                          size: 48,
-                        );
-                      },
                     );
                     if (result != null) {
                       state.didChange(result);
