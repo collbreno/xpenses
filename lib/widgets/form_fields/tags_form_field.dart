@@ -5,14 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
 import 'package:xpenses/entities/tag_entity.dart';
 import 'package:xpenses/utils/async_data.dart';
+import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
 import 'package:xpenses/widgets/picker_dialog.dart';
 import 'package:xpenses/widgets/tag_chip.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class TagsFormField extends FormField<Iterable<Tag>> {
+class TagsFormField<Entity> extends BlocFormField<Iterable<Tag>, Entity> {
   TagsFormField({
     ValueChanged<Iterable<Tag>>? onChanged,
-    super.onSaved,
+    required super.field,
     super.key,
     super.initialValue,
   }) : super(

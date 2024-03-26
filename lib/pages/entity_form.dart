@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpenses/bloc/entity_form_cubit.dart';
 
 class EntityForm<T> extends StatefulWidget {
-  final List<FormField> formFields;
+  final List<Widget> formFields;
   final Widget? header;
   final AppBar appbar;
   const EntityForm({

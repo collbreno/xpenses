@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:money2/money2.dart';
 import 'package:xpenses/widgets/calculator.dart';
+import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
 
-class ValueFormField extends FormField<Money> {
+class ValueFormField<Entity> extends BlocFormField<Money, Entity> {
   ValueFormField({
     super.key,
     super.initialValue,
-    super.onSaved,
+    required super.field,
     ValueChanged<Money>? onChanged,
   }) : super(
           validator: (value) {

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:xpenses/utils/color_utils.dart';
+import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
 import 'package:xpenses/widgets/picker_dialog.dart';
 
-class ColorFormField extends FormField<Color> {
+class ColorFormField<Entity> extends BlocFormField<Color, Entity> {
   ColorFormField({
     super.key,
+    required super.field,
     super.initialValue,
     ValueChanged<Color>? onChanged,
-    super.onSaved,
   }) : super(
           validator: (value) {
             if (value == null) return 'Não pode ser vazio';

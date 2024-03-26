@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:xpenses/constants.dart';
+import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
 
-class DateFormField extends FormField<DateTime> {
+class DateFormField<Entity> extends BlocFormField<DateTime, Entity> {
   DateFormField({
     super.key,
     super.initialValue,
-    super.onSaved,
+    required super.field,
     ValueChanged<DateTime>? onChanged,
   }) : super(
           validator: (value) {

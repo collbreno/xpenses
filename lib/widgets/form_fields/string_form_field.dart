@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
 
-class StringFormField extends FormField<String> {
+class StringFormField<Entity> extends BlocFormField<String, Entity> {
   StringFormField({
     super.key,
-    super.onSaved,
+    required super.field,
     super.initialValue,
     ValueChanged<String>? onChanged,
     int maxLines = 1,

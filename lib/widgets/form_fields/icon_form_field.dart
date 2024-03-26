@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/icon_map.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
 import 'package:xpenses/widgets/picker_dialog.dart';
 
-class IconFormField extends FormField<String> {
+class IconFormField<Entity> extends BlocFormField<String, Entity> {
   IconFormField({
     super.key,
     super.initialValue,
-    super.onSaved,
+    required super.field,
     ValueChanged<String?>? onChanged,
   }) : super(
           builder: (state) {

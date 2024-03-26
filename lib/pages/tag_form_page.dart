@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_design_icons_flutter/icon_map.dart';
-import 'package:xpenses/bloc/entity_form_cubit.dart';
 import 'package:xpenses/entities/tag_entity.dart';
 import 'package:xpenses/enums/form_field_enum.dart';
 import 'package:xpenses/widgets/form_fields/color_form_field.dart';
@@ -21,7 +19,6 @@ class _NewTagPageState extends State<NewTagPage> {
   late String _text;
   late Color _color;
   late String? _iconName;
-  late GlobalKey<FormState> _formKey;
 
   @override
   void initState() {
@@ -29,7 +26,6 @@ class _NewTagPageState extends State<NewTagPage> {
     _text = '';
     _iconName = null;
     _color = Colors.grey;
-    _formKey = GlobalKey();
   }
 
   @override
@@ -45,44 +41,31 @@ class _NewTagPageState extends State<NewTagPage> {
         ),
       ),
       formFields: [
-        StringFormField(
+        StringFormField<Tag>(
           maxLines: 1,
           initialValue: '',
+          field: FormFieldEnum.tagName,
           onChanged: (value) {
             setState(() {
               _text = value;
             });
           },
-          onSaved: (value) => context
-              .read<EntityFormCubit<Tag>>()
-              .saveField(FormFieldEnum.tagName, value),
         ),
-        ColorFormField(
+        ColorFormField<Tag>(
+          field: FormFieldEnum.tagColor,
           initialValue: Colors.grey,
           onChanged: (value) => setState(() {
             _color = value;
           }),
-          onSaved: (value) => context
-              .read<EntityFormCubit<Tag>>()
-              .saveField(FormFieldEnum.tagColor, value),
         ),
-        IconFormField(
+        IconFormField<Tag>(
+          field: FormFieldEnum.tagIcon,
           initialValue: null,
           onChanged: (value) => setState(() {
             _iconName = value;
           }),
-          onSaved: (value) => context
-              .read<EntityFormCubit<Tag>>()
-              .saveField(FormFieldEnum.tagIcon, value),
         ),
       ],
     );
-  }
-
-  void _save() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      context.read<EntityFormCubit<Tag>>().save();
-    }
   }
 }

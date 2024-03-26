@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpenses/bloc/entity_form_cubit.dart';
 import 'package:xpenses/entities/expense_entity.dart';
 import 'package:xpenses/enums/form_field_enum.dart';
 import 'package:xpenses/pages/entity_form.dart';
@@ -17,42 +15,22 @@ class NewExpensePage extends StatelessWidget {
     return EntityForm<Expense>(
       appbar: AppBar(title: const Text('Novo Gasto')),
       formFields: [
-        ValueFormField(
+        ValueFormField<Expense>(
           initialValue: null,
-          onSaved: (value) {
-            context.read<EntityFormCubit<Expense>>().saveField(
-                  FormFieldEnum.expenseValue,
-                  value,
-                );
-          },
+          field: FormFieldEnum.expenseValue,
         ),
-        DateFormField(
+        DateFormField<Expense>(
           initialValue: DateTime.now(),
-          onSaved: (value) {
-            context.read<EntityFormCubit<Expense>>().saveField(
-                  FormFieldEnum.expenseDate,
-                  value,
-                );
-          },
+          field: FormFieldEnum.expenseDate,
         ),
-        StringFormField(
+        StringFormField<Expense>(
           maxLines: 3,
           initialValue: '',
-          onSaved: (value) {
-            context.read<EntityFormCubit<Expense>>().saveField(
-                  FormFieldEnum.expenseDescription,
-                  value,
-                );
-          },
+          field: FormFieldEnum.expenseDescription,
         ),
-        TagsFormField(
+        TagsFormField<Expense>(
           initialValue: const {},
-          onSaved: (value) {
-            context.read<EntityFormCubit<Expense>>().saveField(
-                  FormFieldEnum.expenseTags,
-                  value,
-                );
-          },
+          field: FormFieldEnum.expenseTags,
         ),
       ],
     );
