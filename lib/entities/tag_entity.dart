@@ -15,7 +15,6 @@ class Tag {
 
   @Transient()
   IconData? get icon => iconMap[iconName];
-
   String? iconName;
 
   Tag({

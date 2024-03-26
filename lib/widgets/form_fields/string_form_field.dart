@@ -4,6 +4,7 @@ class StringFormField extends FormField<String> {
   StringFormField({
     super.key,
     super.onSaved,
+    super.initialValue,
     ValueChanged<String>? onChanged,
     int maxLines = 1,
   }) : super(

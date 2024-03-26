@@ -23,6 +23,13 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () {
+                context.push('/expenses');
+              },
+              child: const Text('Gastos'),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () {
                 context.push('/new_tag');
               },
               child: const Text('Nova Tag'),

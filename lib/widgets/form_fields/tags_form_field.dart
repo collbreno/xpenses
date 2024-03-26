@@ -14,8 +14,8 @@ class TagsFormField extends FormField<Iterable<Tag>> {
     ValueChanged<Iterable<Tag>>? onChanged,
     super.onSaved,
     super.key,
+    super.initialValue,
   }) : super(
-          initialValue: {},
           builder: (formState) {
             return BlocBuilder<EntityListCubit<Tag>, AsyncData<List<Tag>>>(
               builder: (context, cubitState) {
@@ -28,11 +28,7 @@ class TagsFormField extends FormField<Iterable<Tag>> {
                               checkPosition: Alignment.centerRight,
                               itemBuilder: (tag) => ListTile(
                                 dense: true,
-                                title: TagChip(
-                                  text: tag.name,
-                                  color: tag.color,
-                                  alignment: Alignment.centerLeft,
-                                ),
+                                title: TagChip.fromTag(tag),
                               ),
                               columns: 1,
                               items: cubitState.data!,

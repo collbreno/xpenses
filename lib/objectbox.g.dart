@@ -15,6 +15,7 @@ import 'package:objectbox/internal.dart'
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
+import 'entities/expense_entity.dart';
 import 'entities/tag_entity.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -48,6 +49,40 @@ final _entities = <obx_int.ModelEntity>[
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(2, 7081710124624419521),
+      name: 'Expense',
+      lastPropertyId: const obx_int.IdUid(4, 4919072298255371102),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 7897364243912476803),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 8694477417806647715),
+            name: 'description',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 4195130867879873794),
+            name: 'date',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 4919072298255371102),
+            name: 'cents',
+            type: 6,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[
+        obx_int.ModelRelation(
+            id: const obx_int.IdUid(1, 8224907355454183699),
+            name: 'tags',
+            targetId: const obx_int.IdUid(1, 5385091276152244694))
+      ],
       backlinks: <obx_int.ModelBacklink>[])
 ];
 
@@ -86,9 +121,9 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(1, 5385091276152244694),
+      lastEntityId: const obx_int.IdUid(2, 7081710124624419521),
       lastIndexId: const obx_int.IdUid(0, 0),
-      lastRelationId: const obx_int.IdUid(0, 0),
+      lastRelationId: const obx_int.IdUid(1, 8224907355454183699),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [],
       retiredIndexUids: const [],
@@ -133,6 +168,41 @@ obx_int.ModelDefinition getObjectBoxModel() {
                 const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
 
           return object;
+        }),
+    Expense: obx_int.EntityDefinition<Expense>(
+        model: _entities[1],
+        toOneRelations: (Expense object) => [],
+        toManyRelations: (Expense object) =>
+            {obx_int.RelInfo<Expense>.toMany(1, object.id): object.tags},
+        getId: (Expense object) => object.id,
+        setId: (Expense object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Expense object, fb.Builder fbb) {
+          final descriptionOffset = fbb.writeString(object.description);
+          fbb.startTable(5);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, descriptionOffset);
+          fbb.addInt64(2, object.date.millisecondsSinceEpoch);
+          fbb.addInt64(3, object.cents);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final descriptionParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 6, '');
+          final dateParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0));
+          final object = Expense(description: descriptionParam, date: dateParam)
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..cents =
+                const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          obx_int.InternalToManyAccess.setRelInfo<Expense>(object.tags, store,
+              obx_int.RelInfo<Expense>.toMany(1, object.id));
+          return object;
         })
   };
 
@@ -154,4 +224,27 @@ class Tag_ {
   /// see [Tag.iconName]
   static final iconName =
       obx.QueryStringProperty<Tag>(_entities[0].properties[3]);
+}
+
+/// [Expense] entity fields to define ObjectBox queries.
+class Expense_ {
+  /// see [Expense.id]
+  static final id =
+      obx.QueryIntegerProperty<Expense>(_entities[1].properties[0]);
+
+  /// see [Expense.description]
+  static final description =
+      obx.QueryStringProperty<Expense>(_entities[1].properties[1]);
+
+  /// see [Expense.date]
+  static final date =
+      obx.QueryDateProperty<Expense>(_entities[1].properties[2]);
+
+  /// see [Expense.cents]
+  static final cents =
+      obx.QueryIntegerProperty<Expense>(_entities[1].properties[3]);
+
+  /// see [Expense.tags]
+  static final tags =
+      obx.QueryRelationToMany<Expense, Tag>(_entities[1].relations[0]);
 }

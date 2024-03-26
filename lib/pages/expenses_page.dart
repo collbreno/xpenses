@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
-import 'package:xpenses/entities/tag_entity.dart';
+import 'package:xpenses/entities/expense_entity.dart';
 import 'package:xpenses/utils/async_data.dart';
 import 'package:xpenses/widgets/tag_chip.dart';
 
-class TagsPage extends StatelessWidget {
-  const TagsPage({super.key});
+class ExpensesPage extends StatelessWidget {
+  const ExpensesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<EntityListCubit<Tag>>(
-      create: (context) => EntityListCubit<Tag>(
-        context.read<Box<Tag>>().getAllAsync,
+    return BlocProvider<EntityListCubit<Expense>>(
+      create: (context) => EntityListCubit<Expense>(
+        context.read<Box<Expense>>().getAllAsync,
       ),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Tags')),
-        body: BlocBuilder<EntityListCubit<Tag>, AsyncData<List<Tag>>>(
+        appBar: AppBar(title: const Text('Gastos')),
+        body: BlocBuilder<EntityListCubit<Expense>, AsyncData<List<Expense>>>(
           builder: (context, state) {
             if (state.isLoading) {
               return _buildLoading();
@@ -31,7 +31,7 @@ class TagsPage extends StatelessWidget {
               }
             } else {
               throw ArgumentError(
-                'The $AsyncData state of ${EntityListCubit<Tag>} is invalid.',
+                'The $AsyncData state of ${EntityListCubit<Expense>} is invalid.',
               );
             }
           },
@@ -52,16 +52,24 @@ class TagsPage extends StatelessWidget {
     return const Center(child: CircularProgressIndicator());
   }
 
-  Widget _buildList(List<Tag> tags) {
+  Widget _buildList(List<Expense> expenses) {
     return Builder(builder: (context) {
       return RefreshIndicator(
-        onRefresh: () => context.read<EntityListCubit<Tag>>().loadData(),
+        onRefresh: () => context.read<EntityListCubit<Expense>>().loadData(),
         child: ListView.builder(
-          itemCount: tags.length,
+          itemCount: expenses.length,
           itemBuilder: (context, index) {
-            final tag = tags[index];
+            final expense = expenses[index];
             return ListTile(
-              title: TagChip.fromTag(tag),
+              title: Text(expense.description),
+              trailing: Text(expense.value.toString()),
+              subtitle: expense.tags.isEmpty
+                  ? null
+                  : Row(
+                      children: expense.tags
+                          .map((tag) => TagChip.fromTag(tag))
+                          .toList(),
+                    ),
             );
           },
         ),
