@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:money2/money2.dart';
 import 'package:xpenses/widgets/calculator.dart';
-import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
 
-class ValueFormField<Entity> extends BlocFormField<Money, Entity> {
+class ValueFormField extends FormField<Money> {
   ValueFormField({
     super.key,
     super.initialValue,
-    required super.field,
-    ValueChanged<Money>? onChanged,
+    super.onSaved,
   }) : super(
           validator: (value) {
             if (value == null) return 'Não pode ser vazio';
@@ -20,27 +18,29 @@ class ValueFormField<Entity> extends BlocFormField<Money, Entity> {
           builder: (state) {
             return Builder(builder: (context) {
               return ListTile(
-                onTap: () async {
-                  final result = await showCalculator(context);
-                  if (result != null) {
-                    state.didChange(result);
-                    onChanged?.call(result);
-                  }
-                },
-                title: InputDecorator(
-                  isEmpty: state.value == null,
-                  decoration: InputDecoration(
-                    icon: const Icon(Icons.attach_money),
-                    border: const OutlineInputBorder(),
-                    hintText: 'Insira o valor',
-                    labelText: 'Valor',
-                    errorText: state.errorText,
+                leading: const Icon(Icons.attach_money),
+                title: InkWell(
+                  onTap: () async {
+                    final result = await showCalculator(context);
+                    if (result != null) {
+                      state.didChange(result);
+                    }
+                  },
+                  child: InputDecorator(
+                    isEmpty: state.value == null,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      hintText: 'Insira o valor',
+                      labelText: 'Valor',
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      errorText: state.errorText,
+                    ),
+                    child: state.value == null
+                        ? null
+                        : Text(
+                            state.value.toString(),
+                          ),
                   ),
-                  child: state.value == null
-                      ? null
-                      : Text(
-                          state.value.toString(),
-                        ),
                 ),
               );
             });

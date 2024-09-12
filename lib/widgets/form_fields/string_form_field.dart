@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
 
-class StringFormField<Entity> extends BlocFormField<String, Entity> {
+class StringFormField extends FormField<String> {
   StringFormField({
-    super.key,
-    required super.field,
+    super.onSaved,
     super.initialValue,
-    ValueChanged<String>? onChanged,
+    super.key,
+    ValueChanged<String?>? onChanged,
     int maxLines = 1,
   }) : super(
           validator: (value) {
@@ -17,12 +16,17 @@ class StringFormField<Entity> extends BlocFormField<String, Entity> {
           builder: (state) {
             return Builder(builder: (context) {
               return ListTile(
-                title: TextField(
+                title: TextFormField(
                   maxLines: maxLines,
                   minLines: 1,
+                  initialValue: initialValue,
                   onChanged: (value) {
                     state.didChange(value);
                     onChanged?.call(value);
+                  },
+                  onSaved: (a) {
+                    print('[onSaved] $a');
+                    onSaved!(a);
                   },
                   decoration: InputDecoration(
                     icon: const Icon(Icons.edit),

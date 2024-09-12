@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:xpenses/constants.dart';
-import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
 
-class DateFormField<Entity> extends BlocFormField<DateTime, Entity> {
+class DateFormField extends FormField<DateTime> {
   DateFormField({
     super.key,
-    super.initialValue,
-    required super.field,
-    ValueChanged<DateTime>? onChanged,
+    required super.initialValue,
+    super.onSaved,
   }) : super(
           validator: (value) {
             if (value == null) return 'Não pode ser vazio';
@@ -26,7 +24,6 @@ class DateFormField<Entity> extends BlocFormField<DateTime, Entity> {
 
                   if (result != null) {
                     state.didChange(result);
-                    onChanged?.call(result);
                   }
                 },
                 title: InputDecorator(

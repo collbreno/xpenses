@@ -3,11 +3,9 @@ import 'package:xpenses/utils/async_data.dart';
 
 class EntityListCubit<T> extends Cubit<AsyncData<List<T>>> {
   Future<List<T>> Function() method;
-  EntityListCubit(this.method) : super(const AsyncData.loading()) {
-    loadData();
-  }
+  EntityListCubit(this.method) : super(const AsyncData.loading());
 
-  Future<void> loadData() async {
+  Future<void> load() async {
     try {
       final result = await method.call();
       emit(AsyncData.withData(result));

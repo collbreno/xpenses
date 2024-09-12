@@ -1,24 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:xpenses/utils/color_utils.dart';
-import 'package:xpenses/widgets/form_fields/bloc_form_field.dart';
+import 'package:xpenses/utils/focus_utils.dart';
 import 'package:xpenses/widgets/picker_dialog.dart';
 
-class ColorFormField<Entity> extends BlocFormField<Color, Entity> {
+class ColorFormField extends FormField<Color> {
   ColorFormField({
     super.key,
-    required super.field,
-    super.initialValue,
-    ValueChanged<Color>? onChanged,
+    required super.initialValue,
+    required super.onSaved,
+    ValueChanged<Color?>? onChanged,
   }) : super(
-          validator: (value) {
-            if (value == null) return 'Não pode ser vazio';
-            return null;
-          },
           builder: (state) {
             return Builder(
               builder: (context) {
                 return ListTile(
                   onTap: () async {
+                    FocusUtils.unfocus();
                     final result = await showPickerDialog(
                       props: PickerDialogProps<Color>(
                         columns: 5,
