@@ -7,6 +7,7 @@ class ValueFormField extends FormField<Money> {
     super.key,
     super.initialValue,
     super.onSaved,
+    ValueChanged<Money?>? onChanged,
   }) : super(
           validator: (value) {
             if (value == null) return 'Não pode ser vazio';
@@ -24,6 +25,7 @@ class ValueFormField extends FormField<Money> {
                     final result = await showCalculator(context);
                     if (result != null) {
                       state.didChange(result);
+                      onChanged?.call(result);
                     }
                   },
                   child: InputDecorator(

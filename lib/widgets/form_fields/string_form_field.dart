@@ -6,6 +6,9 @@ class StringFormField extends FormField<String> {
     super.initialValue,
     super.key,
     ValueChanged<String?>? onChanged,
+    String? hint,
+    String? label,
+    Widget? icon,
     int maxLines = 1,
   }) : super(
           validator: (value) {
@@ -29,10 +32,10 @@ class StringFormField extends FormField<String> {
                     onSaved!(a);
                   },
                   decoration: InputDecoration(
-                    icon: const Icon(Icons.edit),
+                    icon: icon,
                     border: const OutlineInputBorder(),
-                    hintText: 'Insira a descrição',
-                    labelText: 'Descrição',
+                    hintText: hint,
+                    labelText: label,
                     errorText: state.errorText,
                   ),
                 ),
