@@ -65,7 +65,12 @@ class ExpenseListPage extends StatelessWidget {
                 )).push(context);
               },
               title: Text(expense.description),
-              trailing: Text(expense.value.toString()),
+              trailing: Column(
+                children: [
+                  Text(expense.totalValue.toString()),
+                  Text(expense.installments.length.toString()),
+                ],
+              ),
               subtitle: expense.tags.isEmpty
                   ? null
                   : Row(

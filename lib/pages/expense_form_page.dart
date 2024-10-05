@@ -34,9 +34,10 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
     _expense = widget.expense ??
         Expense(
           description: '',
+          title: '',
           date: DateTime.now(),
         );
-    _previewTotalValue = _expense.value;
+    _previewTotalValue = _expense.totalValue;
   }
 
   @override
@@ -57,9 +58,9 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
             },
       formFields: [
         ValueFormField(
-          initialValue: _expense.value,
+          initialValue: _expense.totalValue,
           onSaved: (value) => setState(() {
-            _expense.value = value!;
+            _expense.totalValue = value!;
           }),
           onChanged: (value) => setState(() {
             _previewTotalValue = value!;
@@ -91,6 +92,9 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
         InstallmentsFormField(
           totalValue: _previewTotalValue,
           initialValue: 1,
+          onSaved: (value) => setState(() {
+            _expense.nInstallments = value!;
+          }),
         ),
         PeopleFormField(
           totalValue: _previewTotalValue,

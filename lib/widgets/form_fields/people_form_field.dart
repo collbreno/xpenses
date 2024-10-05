@@ -2,14 +2,13 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money2/money2.dart';
-import 'package:xpenses/constants.dart';
 import 'package:xpenses/entities/person_entity.dart';
 import 'package:xpenses/enums/division_type.dart';
 import 'package:xpenses/utils/money_utils.dart';
 import 'package:xpenses/widgets/calculator.dart';
 import 'package:xpenses/widgets/input_dialog.dart';
 
-class PeopleFormField extends FormField<Iterable<Person>> {
+class PeopleFormField extends FormField<Iterable<PersonPart>> {
   PeopleFormField({
     super.key,
     required Money totalValue,
@@ -63,9 +62,9 @@ class PeopleFormField extends FormField<Iterable<Person>> {
 
   static ListTile _buildPerson(
     BuildContext context,
-    Person person,
+    PersonPart person,
     int index,
-    FormFieldState<Iterable<Person>> state,
+    FormFieldState<Iterable<PersonPart>> state,
   ) {
     final list = state.value!;
     return ListTile(
@@ -83,9 +82,10 @@ class PeopleFormField extends FormField<Iterable<Person>> {
                 );
 
                 if (name != null) {
-                  final newPerson = Person(
+                  final newPerson = PersonPart(
                     value: person.value,
                     name: name,
+                    isPaid: person.isPaid,
                   );
                   final newList = list.toList();
                   newList[index] = newPerson;
@@ -108,9 +108,10 @@ class PeopleFormField extends FormField<Iterable<Person>> {
               onTap: () async {
                 final newValue = await showCalculator(context);
                 if (newValue != null) {
-                  final newPerson = Person(
+                  final newPerson = PersonPart(
                     value: newValue,
                     name: person.name,
+                    isPaid: person.isPaid,
                   );
                   final newList = list.toList();
                   newList[index] = newPerson;
@@ -141,7 +142,7 @@ class PeopleFormField extends FormField<Iterable<Person>> {
     );
   }
 
-  static ListTile _buildSelf(Money totalValue, Iterable<Person> list) {
+  static ListTile _buildSelf(Money totalValue, Iterable<PersonPart> list) {
     final value = totalValue -
         (list.fold(MoneyUtils.zero, (acc, val) => acc + val.value));
     return ListTile(
@@ -169,7 +170,7 @@ class PeopleFormField extends FormField<Iterable<Person>> {
 
   static IconButton _buildAddButton(
     BuildContext context,
-    FormFieldState<Iterable<Person>> state,
+    FormFieldState<Iterable<PersonPart>> state,
   ) {
     return IconButton(
       key: const ValueKey('add_button'),
@@ -180,12 +181,10 @@ class PeopleFormField extends FormField<Iterable<Person>> {
         );
         if (name != null) {
           final newList = state.value!.toList();
-          newList.add(Person(
-            value: Money.fromIntWithCurrency(
-              0,
-              Constants.currency,
-            ),
+          newList.add(PersonPart(
+            value: MoneyUtils.zero,
             name: name,
+            isPaid: false,
           ));
           state.didChange(newList);
         }
@@ -197,7 +196,7 @@ class PeopleFormField extends FormField<Iterable<Person>> {
   static IconButton _buildSplitButton(
     BuildContext context,
     Money totalValue,
-    FormFieldState<Iterable<Person>> state,
+    FormFieldState<Iterable<PersonPart>> state,
   ) {
     final list = state.value!;
     return IconButton(
@@ -207,9 +206,10 @@ class PeopleFormField extends FormField<Iterable<Person>> {
           final count = divisionType == DivisionType.includeMe
               ? list.length + 1
               : list.length;
-          final newList = list.map((person) => Person(
+          final newList = list.map((person) => PersonPart(
                 value: totalValue / count,
                 name: person.name,
+                isPaid: person.isPaid,
               ));
           state.didChange(newList);
         }

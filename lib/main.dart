@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:provider/provider.dart';
 import 'package:xpenses/entities/expense_entity.dart';
+import 'package:xpenses/entities/installment_entity.dart';
 import 'package:xpenses/entities/tag_entity.dart';
 import 'package:xpenses/go_router_builder.dart';
 import 'package:xpenses/object_box.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
         ),
         Provider<Box<Expense>>(
           create: (context) => objectBox.store.box<Expense>(),
+        ),
+        Provider<Box<Installment>>(
+          create: (context) => objectBox.store.box<Installment>(),
         ),
       ],
       child: MaterialApp.router(

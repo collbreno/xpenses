@@ -4,10 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
 import 'package:xpenses/entities/expense_entity.dart';
+import 'package:xpenses/entities/installment_entity.dart';
 import 'package:xpenses/entities/tag_entity.dart';
 import 'package:xpenses/pages/expense_form_page.dart';
 import 'package:xpenses/pages/expense_list_page.dart';
 import 'package:xpenses/pages/home_page.dart';
+import 'package:xpenses/pages/installment_list_page.dart';
 import 'package:xpenses/pages/tag_form_page.dart';
 import 'package:xpenses/pages/tag_list_page.dart';
 import 'package:xpenses/route_params/expense_form_route_params.dart';
@@ -20,6 +22,7 @@ part 'go_router_builder.g.dart';
   TypedGoRoute<ExpenseFormRoute>(path: 'expense_form'),
   TypedGoRoute<ExpenseListRoute>(path: 'expense_list'),
   TypedGoRoute<TagListRoute>(path: 'tag_list'),
+  TypedGoRoute<InstallmentListRoute>(path: 'installment_list'),
 ])
 @immutable
 class HomeRoute extends GoRouteData {
@@ -87,6 +90,20 @@ class TagListRoute extends GoRouteData {
         context.read<Box<Tag>>().getAllAsync,
       )..load(),
       child: const TagListPage(),
+    );
+  }
+}
+
+@immutable
+class InstallmentListRoute extends GoRouteData {
+  const InstallmentListRoute();
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return BlocProvider<EntityListCubit<Installment>>(
+      create: (context) => EntityListCubit<Installment>(
+        context.read<Box<Installment>>().getAllAsync,
+      )..load(),
+      child: const InstallmentListPage(),
     );
   }
 }

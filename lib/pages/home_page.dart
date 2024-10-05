@@ -25,6 +25,13 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () {
+                const InstallmentListRoute().push(context);
+              },
+              child: const Text('Parcelas'),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () {
                 const ExpenseListRoute().push(context);
               },
               child: const Text('Gastos'),
