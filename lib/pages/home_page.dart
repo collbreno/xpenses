@@ -1,4 +1,7 @@
+import 'package:drift_db_viewer/drift_db_viewer.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:xpenses/database/database.dart';
 import 'package:xpenses/go_router_builder.dart';
 import 'package:xpenses/route_params/expense_form_route_params.dart';
 import 'package:xpenses/route_params/tag_form_route_params.dart';
@@ -27,13 +30,6 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 const InstallmentListRoute().push(context);
               },
-              child: const Text('Parcelas'),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () {
-                const ExpenseListRoute().push(context);
-              },
               child: const Text('Gastos'),
             ),
             const SizedBox(height: 12),
@@ -54,6 +50,15 @@ class HomePage extends StatelessWidget {
                   expense: null,
                   onSaved: () {},
                 )).push(context);
+              },
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              child: const Text('Database'),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        DriftDbViewer(context.read<AppDatabase>())));
               },
             ),
           ],

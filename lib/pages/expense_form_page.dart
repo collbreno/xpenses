@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money2/money2.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:xpenses/entities/expense_entity.dart';
+import 'package:xpenses/database/database.dart';
+import 'package:xpenses/expense_generator.dart';
+import 'package:xpenses/models/expense_model.dart';
 import 'package:xpenses/pages/entity_form.dart';
 import 'package:xpenses/widgets/form_fields/date_form_field.dart';
 import 'package:xpenses/widgets/form_fields/installments_form_field.dart';
@@ -25,19 +25,14 @@ class ExpenseFormPage extends StatefulWidget {
 }
 
 class _ExpenseFormPageState extends State<ExpenseFormPage> {
-  late final Expense _expense;
-  late Money _previewTotalValue;
+  late final ExpenseGenerator _generator;
 
   @override
   void initState() {
     super.initState();
-    _expense = widget.expense ??
-        Expense(
-          description: '',
-          title: '',
-          date: DateTime.now(),
-        );
-    _previewTotalValue = _expense.totalValue;
+    _generator = widget.expense != null
+        ? ExpenseGenerator.fromExpense(widget.expense!)
+        : ExpenseGenerator();
   }
 
   @override
@@ -45,60 +40,62 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
     return EntityForm(
       appbarTitle: const Text('Novo Gasto'),
       onSave: () async {
-        await context.read<Box<Expense>>().putAsync(_expense);
+        await context.read<AppDatabase>().addExpense(_generator.generate());
         widget.onSaved();
       },
-      onDelete: widget.expense == null
-          ? null
-          : () async {
-              await context
-                  .read<Box<Expense>>()
-                  .removeAsync(widget.expense!.id);
-              widget.onSaved();
-            },
+      // onDelete: widget.expense == null
+      //     ? null
+      //     : () async {
+      //         await context
+      //             .read<Box<Expense>>()
+      //             .removeAsync(widget.expense!.id);
+      //         widget.onSaved();
+      //       },
       formFields: [
         ValueFormField(
-          initialValue: _expense.totalValue,
+          initialValue: _generator.value,
           onSaved: (value) => setState(() {
-            _expense.totalValue = value!;
+            _generator.value = value!;
           }),
           onChanged: (value) => setState(() {
-            _previewTotalValue = value!;
+            _generator.value = value!;
           }),
         ),
         DateFormField(
-          initialValue: _expense.date,
+          initialValue: _generator.date,
           onSaved: (value) => setState(() {
-            _expense.date = value!;
+            _generator.date = value!;
           }),
         ),
         StringFormField(
           maxLines: 3,
           icon: const Icon(Icons.edit),
-          hint: 'Insira a descrição',
-          label: 'Descrição',
-          initialValue: _expense.description,
+          hint: 'Insira o título',
+          label: 'Título',
+          initialValue: _generator.description,
           onSaved: (value) => setState(() {
-            _expense.description = value!;
+            _generator.title = value!;
           }),
         ),
         TagsFormField(
-          initialValue: _expense.tags.toSet(),
+          initialValue: _generator.tags.toSet(),
           onSaved: (value) => setState(() {
-            _expense.tags.clear();
-            _expense.tags.addAll(value!);
+            _generator.tags = value!.toList();
           }),
         ),
         InstallmentsFormField(
-          totalValue: _previewTotalValue,
+          totalValue: _generator.value,
           initialValue: 1,
           onSaved: (value) => setState(() {
-            _expense.nInstallments = value!;
+            _generator.nInstallments = value!;
           }),
         ),
         PeopleFormField(
-          totalValue: _previewTotalValue,
-          initialValue: const {},
+          totalValue: _generator.value,
+          initialValue: _generator.personParts,
+          onSaved: (value) => setState(() {
+            _generator.personParts = value!.toList();
+          }),
         ),
       ],
     );

@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:objectbox/objectbox.dart';
 import 'package:provider/provider.dart';
-import 'package:xpenses/entities/expense_entity.dart';
-import 'package:xpenses/entities/installment_entity.dart';
-import 'package:xpenses/entities/tag_entity.dart';
+import 'package:xpenses/database/database.dart';
 import 'package:xpenses/go_router_builder.dart';
-import 'package:xpenses/object_box.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final objectBox = await ObjectBox.create();
-  runApp(MyApp(objectBox));
+
+  final database = AppDatabase();
+  runApp(MyApp(database));
 }
 
 class MyApp extends StatelessWidget {
-  final ObjectBox objectBox;
-  MyApp(this.objectBox, {super.key});
+  final AppDatabase database;
+  MyApp(this.database, {super.key});
 
   final _router = GoRouter(
     initialLocation: const HomeRoute().location,
@@ -43,14 +40,8 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        Provider<Box<Tag>>(
-          create: (context) => objectBox.store.box<Tag>(),
-        ),
-        Provider<Box<Expense>>(
-          create: (context) => objectBox.store.box<Expense>(),
-        ),
-        Provider<Box<Installment>>(
-          create: (context) => objectBox.store.box<Installment>(),
+        Provider<AppDatabase>(
+          create: (context) => database,
         ),
       ],
       child: MaterialApp.router(

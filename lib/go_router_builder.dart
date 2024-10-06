@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:objectbox/objectbox.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
-import 'package:xpenses/entities/expense_entity.dart';
-import 'package:xpenses/entities/installment_entity.dart';
-import 'package:xpenses/entities/tag_entity.dart';
+import 'package:xpenses/database/database.dart';
+import 'package:xpenses/models/installment_model.dart';
+import 'package:xpenses/models/tag_model.dart';
 import 'package:xpenses/pages/expense_form_page.dart';
-import 'package:xpenses/pages/expense_list_page.dart';
 import 'package:xpenses/pages/home_page.dart';
 import 'package:xpenses/pages/installment_list_page.dart';
 import 'package:xpenses/pages/tag_form_page.dart';
@@ -20,7 +18,6 @@ part 'go_router_builder.g.dart';
 @TypedGoRoute<HomeRoute>(path: '/', routes: [
   TypedGoRoute<TagFormRoute>(path: 'tag_form'),
   TypedGoRoute<ExpenseFormRoute>(path: 'expense_form'),
-  TypedGoRoute<ExpenseListRoute>(path: 'expense_list'),
   TypedGoRoute<TagListRoute>(path: 'tag_list'),
   TypedGoRoute<InstallmentListRoute>(path: 'installment_list'),
 ])
@@ -56,26 +53,12 @@ class ExpenseFormRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<EntityListCubit<Tag>>(
       create: (context) => EntityListCubit<Tag>(
-        context.read<Box<Tag>>().getAllAsync,
+        context.read<AppDatabase>().getAllTags,
       )..load(),
       child: ExpenseFormPage(
         onSaved: $extra.onSaved,
         expense: $extra.expense,
       ),
-    );
-  }
-}
-
-@immutable
-class ExpenseListRoute extends GoRouteData {
-  const ExpenseListRoute();
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return BlocProvider<EntityListCubit<Expense>>(
-      create: (context) => EntityListCubit<Expense>(
-        context.read<Box<Expense>>().getAllAsync,
-      )..load(),
-      child: const ExpenseListPage(),
     );
   }
 }
@@ -87,7 +70,7 @@ class TagListRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<EntityListCubit<Tag>>(
       create: (context) => EntityListCubit<Tag>(
-        context.read<Box<Tag>>().getAllAsync,
+        () => context.read<AppDatabase>().getAllTags(),
       )..load(),
       child: const TagListPage(),
     );
@@ -101,7 +84,7 @@ class InstallmentListRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<EntityListCubit<Installment>>(
       create: (context) => EntityListCubit<Installment>(
-        context.read<Box<Installment>>().getAllAsync,
+        context.read<AppDatabase>().getAllInstallments,
       )..load(),
       child: const InstallmentListPage(),
     );

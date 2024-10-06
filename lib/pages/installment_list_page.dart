@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
-import 'package:xpenses/entities/installment_entity.dart';
+import 'package:xpenses/models/installment_model.dart';
 import 'package:xpenses/utils/async_data.dart';
 
 class InstallmentListPage extends StatelessWidget {
@@ -59,16 +59,18 @@ class InstallmentListPage extends StatelessWidget {
           itemBuilder: (context, index) {
             final installment = installments[index];
             return ListTile(
-              trailing: Text('${installment.expense.targetId}'),
+              title: Text(_getInstallmentTitle(installment)),
               leading: Text(
                   '${installment.date.day.toString().padLeft(2, '0')}/${installment.date.month.toString().padLeft(2)}'),
-              title: Text(installment.value.toString()),
-              subtitle:
-                  Text('Total: ${installment.expense.target?.totalValue}'),
+              trailing: Text(installment.value.toString()),
             );
           },
         ),
       );
     });
+  }
+
+  String _getInstallmentTitle(Installment installment) {
+    return '${installment.expense!.title} ${installment.index + 1}/x';
   }
 }

@@ -28,7 +28,6 @@ class StringFormField extends FormField<String> {
                     onChanged?.call(value);
                   },
                   onSaved: (a) {
-                    print('[onSaved] $a');
                     onSaved!(a);
                   },
                   decoration: InputDecoration(

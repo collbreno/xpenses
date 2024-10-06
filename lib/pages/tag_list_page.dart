@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
-import 'package:xpenses/entities/tag_entity.dart';
 import 'package:xpenses/go_router_builder.dart';
+import 'package:xpenses/models/tag_model.dart';
 import 'package:xpenses/route_params/tag_form_route_params.dart';
 import 'package:xpenses/utils/async_data.dart';
 import 'package:xpenses/widgets/tag_chip.dart';

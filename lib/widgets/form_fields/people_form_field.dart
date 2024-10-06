@@ -2,8 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money2/money2.dart';
-import 'package:xpenses/entities/person_entity.dart';
 import 'package:xpenses/enums/division_type.dart';
+import 'package:xpenses/models/person_part_model.dart';
 import 'package:xpenses/utils/money_utils.dart';
 import 'package:xpenses/widgets/calculator.dart';
 import 'package:xpenses/widgets/input_dialog.dart';
@@ -82,13 +82,8 @@ class PeopleFormField extends FormField<Iterable<PersonPart>> {
                 );
 
                 if (name != null) {
-                  final newPerson = PersonPart(
-                    value: person.value,
-                    name: name,
-                    isPaid: person.isPaid,
-                  );
                   final newList = list.toList();
-                  newList[index] = newPerson;
+                  newList[index] = person.copy(name: name);
                   state.didChange(newList);
                 }
               },
@@ -108,13 +103,8 @@ class PeopleFormField extends FormField<Iterable<PersonPart>> {
               onTap: () async {
                 final newValue = await showCalculator(context);
                 if (newValue != null) {
-                  final newPerson = PersonPart(
-                    value: newValue,
-                    name: person.name,
-                    isPaid: person.isPaid,
-                  );
                   final newList = list.toList();
-                  newList[index] = newPerson;
+                  newList[index] = person.copy(value: newValue);
                   state.didChange(newList);
                 }
               },
@@ -181,11 +171,7 @@ class PeopleFormField extends FormField<Iterable<PersonPart>> {
         );
         if (name != null) {
           final newList = state.value!.toList();
-          newList.add(PersonPart(
-            value: MoneyUtils.zero,
-            name: name,
-            isPaid: false,
-          ));
+          newList.add(PersonPart.create(name));
           state.didChange(newList);
         }
       },
@@ -206,10 +192,8 @@ class PeopleFormField extends FormField<Iterable<PersonPart>> {
           final count = divisionType == DivisionType.includeMe
               ? list.length + 1
               : list.length;
-          final newList = list.map((person) => PersonPart(
+          final newList = list.map((person) => person.copy(
                 value: totalValue / count,
-                name: person.name,
-                isPaid: person.isPaid,
               ));
           state.didChange(newList);
         }

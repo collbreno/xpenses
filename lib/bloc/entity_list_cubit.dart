@@ -11,6 +11,7 @@ class EntityListCubit<T> extends Cubit<AsyncData<List<T>>> {
       emit(AsyncData.withData(result));
     } catch (e) {
       emit(AsyncData.withError(e));
+      rethrow;
     }
   }
 }

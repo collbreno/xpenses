@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xpenses/entities/expense_entity.dart';
+import 'package:xpenses/models/expense_model.dart';
 
 class ExpenseFormRouteParams {
   final Expense? expense;

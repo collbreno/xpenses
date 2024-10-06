@@ -217,11 +217,11 @@ class _InnerPickerDialogState<T> extends State<_InnerPickerDialog<T>> {
     return [
       TextButton(
         onPressed: widget.onCancel,
-        child: Text('Cancelar'),
+        child: const Text('Cancelar'),
       ),
       TextButton(
         onPressed: widget.onConfirm,
-        child: Text('Ok'),
+        child: const Text('Ok'),
       ),
     ];
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_design_icons_flutter/icon_map.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:xpenses/entities/tag_entity.dart';
+import 'package:xpenses/database/database.dart';
+import 'package:xpenses/models/tag_model.dart';
 import 'package:xpenses/widgets/form_fields/color_form_field.dart';
 import 'package:xpenses/widgets/form_fields/icon_form_field.dart';
 import 'package:xpenses/widgets/form_fields/string_form_field.dart';
@@ -23,18 +23,21 @@ class TagFormPage extends StatefulWidget {
 }
 
 class _TagFormPageState extends State<TagFormPage> {
-  late final Tag _tag;
+  late Tag _tag;
   late String _previewName;
   late Color _previewColor;
   late String? _previewIcon;
+
+  bool get _isUpdate => widget.tag != null;
 
   @override
   void initState() {
     super.initState();
     _tag = widget.tag ??
         Tag(
+          id: 0,
           name: '',
-          iconName: null,
+          iconName: '',
           color: Colors.grey,
         );
     _previewName = _tag.name;
@@ -46,15 +49,22 @@ class _TagFormPageState extends State<TagFormPage> {
   Widget build(BuildContext context) {
     return EntityForm(
       onSave: () async {
-        await context.read<Box<Tag>>().putAsync(_tag);
-        widget.onSaved();
+        final db = context.read<AppDatabase>();
+        if (_isUpdate) {
+          if (await db.updateTag(_tag)) {
+            widget.onSaved();
+          }
+        } else {
+          await db.addTag(_tag);
+          widget.onSaved();
+        }
       },
-      onDelete: widget.tag == null
-          ? null
-          : () async {
-              await context.read<Box<Tag>>().removeAsync(widget.tag!.id);
-              widget.onSaved();
-            },
+      // onDelete: widget.tag == null
+      //     ? null
+      //     : () async {
+      //         await context.read<Box<Tag>>().removeAsync(widget.tag!.id);
+      //         widget.onSaved();
+      //       },
       appbarTitle: const Text('Nova Tag'),
       header: Padding(
         padding: const EdgeInsets.all(12),
@@ -94,19 +104,19 @@ class _TagFormPageState extends State<TagFormPage> {
 
   void _setText(String? text) {
     setState(() {
-      _tag.name = text!;
+      _tag = _tag.copy(name: text!);
     });
   }
 
   void _setColor(Color? color) {
     setState(() {
-      _tag.color = color!;
+      _tag = _tag.copy(color: color!);
     });
   }
 
   void _setIconName(String? iconName) {
     setState(() {
-      _tag.iconName = iconName;
+      _tag = _tag.copy(iconName: iconName ?? '');
     });
   }
 }

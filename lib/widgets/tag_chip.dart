@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:xpenses/entities/tag_entity.dart';
+import 'package:xpenses/models/tag_model.dart';
 import 'package:xpenses/utils/color_utils.dart';
 
 class TagChip extends StatelessWidget {
