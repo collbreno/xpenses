@@ -12,6 +12,7 @@ class Installment {
   final int index;
   final List<PersonPart> personParts;
   final Expense? expense;
+  final int? totalCount;
 
   Money get myPart =>
       value - personParts.fold(MoneyUtils.zero, (acc, e) => acc + e.value);
@@ -23,12 +24,14 @@ class Installment {
     required this.index,
     required this.personParts,
     required this.expense,
+    this.totalCount,
   });
 
   Installment.fromTable(
     InstallmentEntry entry, {
     required Iterable<PersonPartEntry> personPartEntries,
     ExpenseEntry? expenseEntry,
+    this.totalCount,
   })  : id = entry.id,
         value = Money.fromIntWithCurrency(entry.valueCents, Constants.currency),
         date = entry.date,

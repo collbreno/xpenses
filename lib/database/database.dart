@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:flutter/material.dart' hide Table;
 import 'package:xpenses/database/expense_table.dart';
 import 'package:xpenses/database/expense_tags_table.dart';
 import 'package:xpenses/database/installment_table.dart';
@@ -10,6 +11,7 @@ import 'package:xpenses/database/tag_table.dart';
 import 'package:xpenses/models/expense_model.dart';
 import 'package:xpenses/models/installment_model.dart';
 import 'package:xpenses/models/tag_model.dart';
+import 'package:xpenses/utils/month.dart';
 
 part 'database.g.dart';
 
@@ -57,15 +59,30 @@ class AppDatabase extends _$AppDatabase {
     return update(tagTable).replace(tag);
   }
 
-  Future<List<Installment>> getAllInstallments() async {
+  Future<List<Installment>> getInstallments(Month month) async {
+    final allInstallments = Subquery(select(installmentTable), 's');
+
+    final amount = allInstallments.ref(installmentTable.id).count();
+
     final query = select(installmentTable).join([
       innerJoin(
           expenseTable, expenseTable.id.equalsExp(installmentTable.expenseId)),
       leftOuterJoin(
         personPartTable,
         personPartTable.installmentId.equalsExp(installmentTable.id),
+      ),
+      innerJoin(
+        allInstallments,
+        allInstallments
+            .ref(installmentTable.expenseId)
+            .equalsExp(expenseTable.id),
+      ),
+    ])
+      ..where(
+        installmentTable.date.isBetweenValues(month.firstDay, month.lastDay),
       )
-    ]);
+      ..addColumns([amount])
+      ..groupBy([installmentTable.expenseId]);
 
     final rows = await query.get();
     final groups = rows.groupListsBy((row) => row.read(installmentTable.id));
@@ -79,6 +96,7 @@ class AppDatabase extends _$AppDatabase {
         rows.first.readTable(installmentTable),
         personPartEntries: personParts.whereNotNull(),
         expenseEntry: rows.first.readTable(expenseTable),
+        totalCount: rows.first.read(amount),
       );
     }).toList();
   }
@@ -123,5 +141,17 @@ class AppDatabase extends _$AppDatabase {
     });
 
     return expenseId;
+  }
+
+  Future<DateTimeRange> getExpensesDateTimeRange() {
+    final min = installmentTable.date.min();
+    final max = installmentTable.date.max();
+    final query = selectOnly(installmentTable)..addColumns([min, max]);
+    return query
+        .map((row) => DateTimeRange(
+              start: row.read(min)!,
+              end: row.read(max)!,
+            ))
+        .getSingle();
   }
 }

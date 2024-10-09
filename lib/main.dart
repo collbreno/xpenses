@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:xpenses/database/database.dart';
 import 'package:xpenses/go_router_builder.dart';
 
 void main() async {
+  await initializeDateFormatting('pt_BR', null);
   WidgetsFlutterBinding.ensureInitialized();
+  Intl.defaultLocale = 'pt_BR';
 
   final database = AppDatabase();
   runApp(MyApp(database));

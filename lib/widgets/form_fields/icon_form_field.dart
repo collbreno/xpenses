@@ -15,6 +15,15 @@ class IconFormField extends FormField<String> {
             return Builder(
               builder: (context) {
                 return ListTile(
+                  trailing: state.value!.isEmpty
+                      ? null
+                      : IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            state.didChange('');
+                            onChanged?.call('');
+                          },
+                        ),
                   onTap: () async {
                     FocusUtils.unfocus();
                     final result = await showPickerDialog<String>(
@@ -51,7 +60,13 @@ class IconFormField extends FormField<String> {
                           : Icon(iconMap[state.value]),
                       suffixIcon: const Icon(Icons.arrow_drop_down),
                     ),
-                    child: state.value == null ? null : Text(state.value!),
+                    child: state.value!.isEmpty
+                        ? null
+                        : FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(state.value!),
+                          ),
                   ),
                 );
               },
