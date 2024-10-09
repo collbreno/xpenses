@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = 'pt_BR';
 
-  final database = AppDatabase();
+  final database = AppDatabase(AppDatabase.openConnection());
   runApp(MyApp(database));
 }
 

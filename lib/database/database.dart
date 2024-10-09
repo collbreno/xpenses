@@ -4,6 +4,7 @@ import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/material.dart' hide Table;
 import 'package:xpenses/database/expense_table.dart';
 import 'package:xpenses/database/expense_tags_table.dart';
+import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/database/installment_table.dart';
 import 'package:xpenses/database/person_part_table.dart';
 import 'package:xpenses/database/person_payment_table.dart';
@@ -23,20 +24,22 @@ part 'database.g.dart';
   TagTable,
   PersonPaymentTable,
 ])
-class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+class AppDatabase extends _$AppDatabase implements IAppDatabase {
+  AppDatabase(super.e);
   @override
   int get schemaVersion => 1;
 
-  static QueryExecutor _openConnection() {
+  static QueryExecutor openConnection() {
     return driftDatabase(name: 'app_database');
   }
 
+  @override
   Future<List<Tag>> getAllTags() async {
     final entries = await select(tagTable).get();
     return entries.map((e) => Tag.fromTable(e)).toList();
   }
 
+  @override
   Future<int> addTag(Tag model) async {
     final tag = TagTableCompanion(
       colorCode: Value(model.color.value),
