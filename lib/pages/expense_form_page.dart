@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpenses/database/database.dart';
+import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/expense_generator.dart';
 import 'package:xpenses/models/expense_model.dart';
 import 'package:xpenses/pages/entity_form.dart';
@@ -40,7 +40,7 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
     return EntityForm(
       appbarTitle: const Text('Novo Gasto'),
       onSave: () async {
-        await context.read<AppDatabase>().addExpense(_generator.generate());
+        await context.read<IAppDatabase>().addExpense(_generator.generate());
         widget.onSaved();
       },
       // onDelete: widget.expense == null

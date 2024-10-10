@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/material.dart' hide Table;
+import 'package:money2/src/money.dart';
 import 'package:xpenses/database/expense_table.dart';
 import 'package:xpenses/database/expense_tags_table.dart';
 import 'package:xpenses/database/i_database.dart';
@@ -12,6 +13,7 @@ import 'package:xpenses/database/tag_table.dart';
 import 'package:xpenses/models/expense_model.dart';
 import 'package:xpenses/models/installment_model.dart';
 import 'package:xpenses/models/tag_model.dart';
+import 'package:xpenses/utils/money_utils.dart';
 import 'package:xpenses/utils/month.dart';
 
 part 'database.g.dart';
@@ -51,6 +53,7 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
     return into(tagTable).insert(tag);
   }
 
+  @override
   Future<bool> updateTag(Tag model) async {
     final tag = TagTableCompanion(
       colorCode: Value(model.color.value),
@@ -62,6 +65,7 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
     return update(tagTable).replace(tag);
   }
 
+  @override
   Future<List<Installment>> getInstallments(Month month) async {
     final allInstallments = Subquery(select(installmentTable), 's');
 
@@ -104,6 +108,7 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
     }).toList();
   }
 
+  @override
   Future<int> addExpense(Expense model) async {
     final expense = ExpenseTableCompanion(
       createdAt: Value(model.createdAt),
@@ -146,6 +151,7 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
     return expenseId;
   }
 
+  @override
   Future<DateTimeRange> getExpensesDateTimeRange() {
     final min = installmentTable.date.min();
     final max = installmentTable.date.max();
@@ -156,5 +162,19 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
               end: row.read(max)!,
             ))
         .getSingle();
+  }
+
+  @override
+  Stream<Money> watchTotalByMonth(Month month) {
+    final totalValue = installmentTable.valueCents.sum();
+    final query = selectOnly(installmentTable)
+      ..where(
+        installmentTable.date.isBetweenValues(month.firstDay, month.lastDay),
+      )
+      ..addColumns([totalValue]);
+
+    return query
+        .map((row) => MoneyUtils.fromCents(row.read(totalValue)!))
+        .watchSingle();
   }
 }

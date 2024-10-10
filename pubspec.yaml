@@ -50,6 +50,7 @@ dependencies:
   drift: ^2.19.1+1
   drift_flutter: ^0.2.0
   drift_db_viewer: ^2.1.0
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

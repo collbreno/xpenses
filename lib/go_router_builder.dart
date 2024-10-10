@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
 import 'package:xpenses/bloc/installments_cubit.dart';
-import 'package:xpenses/database/database.dart';
+import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/models/tag_model.dart';
 import 'package:xpenses/pages/expense_form_page.dart';
 import 'package:xpenses/pages/home_page.dart';
@@ -53,7 +53,7 @@ class ExpenseFormRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<EntityListCubit<Tag>>(
       create: (context) => EntityListCubit<Tag>(
-        context.read<AppDatabase>().getAllTags,
+        context.read<IAppDatabase>().getAllTags,
       )..load(),
       child: ExpenseFormPage(
         onSaved: $extra.onSaved,
@@ -70,7 +70,7 @@ class TagListRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<EntityListCubit<Tag>>(
       create: (context) => EntityListCubit<Tag>(
-        () => context.read<AppDatabase>().getAllTags(),
+        () => context.read<IAppDatabase>().getAllTags(),
       )..load(),
       child: const TagListPage(),
     );
@@ -84,7 +84,7 @@ class InstallmentsRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) {
     return BlocProvider<InstallmentsCubit>(
       create: (context) => InstallmentsCubit(
-        context.read<AppDatabase>(),
+        context.read<IAppDatabase>(),
       )..loadRange(),
       child: const InstallmentsPage(),
     );

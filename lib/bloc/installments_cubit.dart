@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:xpenses/database/database.dart';
+import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/models/installment_model.dart';
 import 'package:xpenses/utils/async_data.dart';
 import 'package:xpenses/utils/month.dart';
@@ -9,7 +9,7 @@ import 'package:xpenses/utils/month.dart';
 part 'installments_state.dart';
 
 class InstallmentsCubit extends Cubit<InstallmentsState> {
-  final AppDatabase db;
+  final IAppDatabase db;
   InstallmentsCubit(this.db) : super(const InstallmentsState.initial());
 
   Future<void> loadRange() async {

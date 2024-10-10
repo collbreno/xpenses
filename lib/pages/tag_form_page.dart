@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_design_icons_flutter/icon_map.dart';
-import 'package:xpenses/database/database.dart';
+import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/models/tag_model.dart';
 import 'package:xpenses/widgets/form_fields/color_form_field.dart';
 import 'package:xpenses/widgets/form_fields/icon_form_field.dart';
@@ -34,7 +34,7 @@ class _TagFormPageState extends State<TagFormPage> {
   void initState() {
     super.initState();
     _tag = widget.tag ??
-        Tag(
+        const Tag(
           id: 0,
           name: '',
           iconName: '',
@@ -49,7 +49,7 @@ class _TagFormPageState extends State<TagFormPage> {
   Widget build(BuildContext context) {
     return EntityForm(
       onSave: () async {
-        final db = context.read<AppDatabase>();
+        final db = context.read<IAppDatabase>();
         if (_isUpdate) {
           if (await db.updateTag(_tag)) {
             widget.onSaved();

@@ -1,69 +1,72 @@
-import 'package:drift_db_viewer/drift_db_viewer.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:xpenses/database/database.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:xpenses/bloc/month_total_cubit.dart';
+import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/go_router_builder.dart';
 import 'package:xpenses/route_params/expense_form_route_params.dart';
-import 'package:xpenses/route_params/tag_form_route_params.dart';
+import 'package:xpenses/widgets/cards/month_total_card.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+    return BlocProvider(
+      create: (context) => MonthTotalCubit(
+        context.read<IAppDatabase>(),
+      )..load(),
+      child: Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              DrawerHeader(
+                child: Text('Header'),
+              ),
+              ListTile(
+                onTap: () {
+                  context.pop();
+                  TagListRoute().push(context);
+                },
+                title: Text('Gerenciar Tags'),
+                leading: const Icon(Icons.label),
+              ),
+            ],
+          ),
+        ),
+        appBar: AppBar(
+          title: const Text('Home'),
+        ),
+        body: ListView(
           children: [
-            ElevatedButton(
-              onPressed: () {
-                const TagListRoute().push(context);
-              },
-              child: const Text('Tags'),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () {
-                const InstallmentsRoute().push(context);
-              },
-              child: const Text('Gastos'),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              child: const Text('Nova Tag'),
-              onPressed: () {
-                TagFormRoute(TagFormRouteParams(
-                  tag: null,
-                  onSaved: () {},
-                )).push(context);
-              },
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              child: const Text('Novo Gasto'),
-              onPressed: () {
-                ExpenseFormRoute(ExpenseFormRouteParams(
-                  expense: null,
-                  onSaved: () {},
-                )).push(context);
-              },
-            ),
-            const SizedBox(height: 12),
-            OutlinedButton(
-              child: const Text('Database'),
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        DriftDbViewer(context.read<AppDatabase>())));
-              },
-            ),
+            _buildTotalMonthCard(),
           ],
         ),
+        floatingActionButton: _buildFAB(),
       ),
     );
+  }
+
+  Widget _buildTotalMonthCard() {
+    return BlocBuilder<MonthTotalCubit, MonthTotalState>(
+      builder: (context, state) {
+        return MonthTotalCard(state);
+      },
+    );
+  }
+
+  Widget _buildFAB() {
+    return Builder(builder: (context) {
+      return FloatingActionButton.extended(
+        onPressed: () {
+          ExpenseFormRoute(ExpenseFormRouteParams(
+            expense: null,
+            onSaved: () {},
+          )).push(context);
+        },
+        icon: const Icon(Icons.add),
+        label: const Text('Gasto'),
+      );
+    });
   }
 }

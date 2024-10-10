@@ -33,7 +33,7 @@ class InstallmentsPage extends StatelessWidget {
 
   Widget _buildScaffold(Widget body) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gastos')),
+      appBar: AppBar(title: const Text('Meus Gastos')),
       body: body,
     );
   }

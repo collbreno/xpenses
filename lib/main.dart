@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:xpenses/database/database.dart';
+import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/go_router_builder.dart';
 
 void main() async {
@@ -28,8 +29,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const colorScheme = ColorScheme(
       brightness: Brightness.dark,
-      background: Color(0xff121212),
-      onBackground: Colors.white,
       primary: Color(0xFF236855),
       onPrimary: Colors.white,
       secondary: Color(0xFF90B77E),
@@ -44,7 +43,7 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        Provider<AppDatabase>(
+        Provider<IAppDatabase>(
           create: (context) => database,
         ),
       ],
@@ -53,6 +52,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: colorScheme,
           useMaterial3: true,
+          cardTheme: CardTheme(
+            color: Color(0xFF1D1B20),
+          ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,

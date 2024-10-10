@@ -33,6 +33,18 @@ class TagListPage extends StatelessWidget {
           }
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        onPressed: () {
+          TagFormRoute(TagFormRouteParams(
+            tag: null,
+            onSaved: () {
+              context.read<EntityListCubit<Tag>>().load();
+            },
+          )).push(context);
+        },
+        label: const Text('Tag'),
+      ),
     );
   }
 
