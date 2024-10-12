@@ -6,21 +6,32 @@ import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:xpenses/bloc/month_total_cubit.dart';
+import 'package:xpenses/bloc/pending_payments_cubit.dart';
 import 'package:xpenses/database/database.dart';
 import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/go_router_builder.dart';
 import 'package:xpenses/route_params/expense_form_route_params.dart';
 import 'package:xpenses/widgets/cards/month_total_card.dart';
+import 'package:xpenses/widgets/cards/pending_payments_card.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => MonthTotalCubit(
-        context.read<IAppDatabase>(),
-      )..load(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => MonthTotalCubit(
+            context.read<IAppDatabase>(),
+          )..load(),
+        ),
+        BlocProvider(
+          create: (context) => PendingPaymentsCubit(
+            context.read<IAppDatabase>(),
+          )..load(),
+        ),
+      ],
       child: Scaffold(
         drawer: Drawer(
           child: ListView(
@@ -43,7 +54,8 @@ class HomePage extends StatelessWidget {
         ),
         body: ListView(
           children: [
-            _buildTotalMonthCard(),
+            _buildMonthTotalCard(),
+            _buildPendingPaymentsCard(),
           ],
         ),
         floatingActionButton: _buildFAB(),
@@ -63,10 +75,18 @@ class HomePage extends StatelessWidget {
     });
   }
 
-  Widget _buildTotalMonthCard() {
+  Widget _buildMonthTotalCard() {
     return BlocBuilder<MonthTotalCubit, MonthTotalState>(
       builder: (context, state) {
         return MonthTotalCard(state);
+      },
+    );
+  }
+
+  Widget _buildPendingPaymentsCard() {
+    return BlocBuilder<PendingPaymentsCubit, PendingPaymentsState>(
+      builder: (context, state) {
+        return PendingPaymentsCard(state);
       },
     );
   }

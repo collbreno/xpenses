@@ -1,6 +1,9 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xpenses/database/database.dart';
+import 'package:xpenses/models/pending_payment.dart';
+import 'package:xpenses/utils/money_utils.dart';
+import 'package:xpenses/utils/month.dart';
 
 import '../fixtures/expense_fixture.dart';
 import '../fixtures/tag_fixture.dart';
@@ -327,6 +330,44 @@ void main() {
       expect(personPartRows[1].installmentId, 2);
       expect(personPartRows[1].name, 'Pessoa 1');
       expect(personPartRows[1].valueCents, 1000);
+    });
+  });
+
+  group('Pending payments', () {
+    test('when database is empty', () {
+      final stream = db.watchPendingPayments(DateTime.now());
+
+      expect(stream, emits(isEmpty));
+    });
+
+    test('should return all people', () async {
+      final expense = expenseFix.expenseWithPeople;
+      await db.addExpense(expense);
+
+      final date = expense.installments!.single.date.monthYear.lastDay;
+
+      final stream = db.watchPendingPayments(date);
+      expect(
+          stream,
+          emits(unorderedEquals([
+            PendingPayment(name: 'Pessoa 1', value: MoneyUtils.fromCents(1000)),
+            PendingPayment(name: 'Pessoa 2', value: MoneyUtils.fromCents(1500)),
+          ])));
+    });
+
+    test('should sum and ignore installments after date', () async {
+      final expense = expenseFix.expenseWithPersonMultipleTimes;
+      expense.tags.clear();
+      await db.addExpense(expense);
+
+      final date = expense.installments![1].date.monthYear.lastDay;
+
+      final stream = db.watchPendingPayments(date);
+      expect(
+          stream,
+          emits(unorderedEquals([
+            PendingPayment(name: 'Pessoa 1', value: MoneyUtils.fromCents(2000)),
+          ])));
     });
   });
 }

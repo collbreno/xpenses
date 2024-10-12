@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:xpenses/bloc/month_total_cubit.dart';
 import 'package:xpenses/go_router_builder.dart';
 import 'package:xpenses/widgets/async_data_builder.dart';
+import 'package:xpenses/widgets/text_placeholder.dart';
 
 class MonthTotalCard extends StatelessWidget {
   final MonthTotalState state;
@@ -31,14 +31,15 @@ class MonthTotalCard extends StatelessWidget {
               ),
               AsyncDataBuilder(
                 state: state.thisMonth,
-                loadingBuilder: (context) => _buildShimmer(Size(120, 36)),
+                loadingBuilder: (context) =>
+                    const TextPlaceholder(Size(120, 36)),
                 builder: (context, data) {
                   return SizedBox(
                     height: 36,
                     child: FittedBox(
                       child: Text(
                         data.toString(),
-                        style: TextStyle(fontWeight: FontWeight.w500),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ),
                   );
@@ -52,7 +53,8 @@ class MonthTotalCard extends StatelessWidget {
                   const SizedBox(width: 6),
                   AsyncDataBuilder(
                     state: state.prevMonth,
-                    loadingBuilder: (context) => _buildShimmer(Size(80, 24)),
+                    loadingBuilder: (context) =>
+                        const TextPlaceholder(Size(80, 24)),
                     builder: (context, data) {
                       return SizedBox(
                         height: 24,
@@ -64,21 +66,6 @@ class MonthTotalCard extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildShimmer(Size size) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade800,
-      highlightColor: Colors.grey.shade600,
-      child: Container(
-        width: size.width,
-        height: size.height,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.white,
         ),
       ),
     );
