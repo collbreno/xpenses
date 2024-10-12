@@ -38,6 +38,12 @@ jobs:
           flutter-version: 3.22.2
           channel: stable                
           cache: true    
+      - name: Setup build tool version variable
+        shell: bash
+        run: |
+          BUILD_TOOLS_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
+          echo "BUILD_TOOLS_VERSION=$BUILD_TOOLS_VERSION" >> $GITHUB_ENV
+          echo Last build tool version is: $BUILD_TOOLS_VERSION
       - name: Get dependencies
         run: flutter pub get    
       - name: Run build_runner
@@ -53,6 +59,8 @@ jobs:
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOLS_VERSION }}          
       - name: Deploy APK to GitHub Pages
         run: |
           mkdir -p public/downloads
