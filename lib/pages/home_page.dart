@@ -1,7 +1,11 @@
+import 'package:drift_db_viewer/drift_db_viewer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:xpenses/bloc/month_total_cubit.dart';
+import 'package:xpenses/database/database.dart';
 import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/go_router_builder.dart';
 import 'package:xpenses/route_params/expense_form_route_params.dart';
@@ -20,15 +24,16 @@ class HomePage extends StatelessWidget {
         drawer: Drawer(
           child: ListView(
             children: [
-              DrawerHeader(
+              const DrawerHeader(
                 child: Text('Header'),
               ),
+              if (kDebugMode) _buildDatabaseDebugButton(),
               ListTile(
                 onTap: () {
                   context.pop();
-                  TagListRoute().push(context);
+                  const TagListRoute().push(context);
                 },
-                title: Text('Gerenciar Tags'),
+                title: const Text('Gerenciar Tags'),
                 leading: const Icon(Icons.label),
               ),
             ],
@@ -66,6 +71,26 @@ class HomePage extends StatelessWidget {
         },
         icon: const Icon(Icons.add),
         label: const Text('Gasto'),
+      );
+    });
+  }
+
+  Widget _buildDatabaseDebugButton() {
+    return Builder(builder: (context) {
+      return ListTile(
+        textColor: Colors.red,
+        iconColor: Colors.red,
+        leading: Icon(MdiIcons.database),
+        title: const Text('Database'),
+        onTap: () {
+          final db = context.read<IAppDatabase>() as AppDatabase;
+          context.pop();
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => DriftDbViewer(db),
+            ),
+          );
+        },
       );
     });
   }

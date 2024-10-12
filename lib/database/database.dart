@@ -183,7 +183,7 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
       ..addColumns([totalValue]);
 
     return query
-        .map((row) => MoneyUtils.fromCents(row.read(totalValue)!))
+        .map((row) => MoneyUtils.fromCents(row.read(totalValue) ?? 0))
         .watchSingle();
   }
 }
