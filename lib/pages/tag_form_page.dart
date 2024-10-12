@@ -65,7 +65,7 @@ class _TagFormPageState extends State<TagFormPage> {
       //         await context.read<Box<Tag>>().removeAsync(widget.tag!.id);
       //         widget.onSaved();
       //       },
-      appbarTitle: const Text('Nova Tag'),
+      appbarTitle: Text(_isUpdate ? 'Editar Tag' : 'Nova Tag'),
       header: Padding(
         padding: const EdgeInsets.all(12),
         child: TagChip(
@@ -83,6 +83,7 @@ class _TagFormPageState extends State<TagFormPage> {
           onSaved: _setText,
           maxLines: 1,
           initialValue: _tag.name,
+          label: 'Título',
         ),
         ColorFormField(
           onChanged: (value) => setState(() {

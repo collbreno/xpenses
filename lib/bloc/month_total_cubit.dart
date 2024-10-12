@@ -29,6 +29,7 @@ class MonthTotalCubit extends Cubit<MonthTotalState> {
       },
       onError: (e) {
         emit(state.copy(thisMonth: AsyncData.withError(e)));
+        throw e;
       },
     );
   }
@@ -41,6 +42,7 @@ class MonthTotalCubit extends Cubit<MonthTotalState> {
       },
       onError: (e) {
         emit(state.copy(prevMonth: AsyncData.withError(e)));
+        throw e;
       },
     );
   }
