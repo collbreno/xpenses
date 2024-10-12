@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:xpenses/bloc/month_total_cubit.dart';
 import 'package:xpenses/database/database.dart';
 import 'package:xpenses/database/i_database.dart';
@@ -24,9 +25,7 @@ class HomePage extends StatelessWidget {
         drawer: Drawer(
           child: ListView(
             children: [
-              const DrawerHeader(
-                child: Text('Header'),
-              ),
+              _buildVersion(),
               if (kDebugMode) _buildDatabaseDebugButton(),
               ListTile(
                 onTap: () {
@@ -50,6 +49,18 @@ class HomePage extends StatelessWidget {
         floatingActionButton: _buildFAB(),
       ),
     );
+  }
+
+  Widget _buildVersion() {
+    return Builder(builder: (context) {
+      return FutureBuilder<PackageInfo>(
+          future: PackageInfo.fromPlatform(),
+          builder: (context, packageInfo) {
+            return DrawerHeader(
+              child: Text('v${packageInfo.data?.version ?? '-'}'),
+            );
+          });
+    });
   }
 
   Widget _buildTotalMonthCard() {
