@@ -1,0 +1,41 @@
+failed () {
+    echo "ERROR: Operation $1 failed. Finishing execution!"
+    exit 1
+}
+
+if [ "$#" -ne 1 ]
+then
+    echo "ERROR: Upgrade type not specified"
+    echo "Usage: $0 <major|minor|patch>"
+    exit 1
+elif [ "$1" != "minor" ] && [ "$1" != "major" ] && [ "$1" != "patch" ]
+then
+    echo "ERROR: Invalid upgrade type"
+    echo "Usage: $0 <major|minor|patch>"
+    exit 1
+fi
+
+echo "Upgrading version number..."
+
+version=$(flutter pub run cider bump $1 --bump-build | tail -1)
+tag=$(echo "v$version" | cut -d'+' -f1)
+if [ -z "$version" ]
+then
+    echo "ERROR: Cannot upgrade version"
+    exit 1
+elif [ -z "$tag" ]
+then
+    echo "ERROR: Cannot create tag"
+    exit 1
+fi
+
+git add pubspec.yaml \
+    && git commit -m "[$tag] Upgrading version" \
+    || failed "git commit"
+
+git tag $tag || failed "git tag"
+
+git push || failed "git push"
+git push origin $tag || failed "git push tag"
+
+echo "Upgraded to $tag successfully!"
