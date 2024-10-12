@@ -42,13 +42,13 @@ jobs:
         run: flutter pub get    
       - name: Run build_runner
         run: dart run build_runner build    
-      - name: Build release app bundle
-        run: flutter build appbundle --release
-      - name: Sign App Bundle
+      - name: Build release app apk
+        run: flutter build apk --release
+      - name: Sign App APK
         uses: r0adkll/sign-android-release@v1   
         id: sign_app
         with:
-          releaseDirectory: build/app/outputs/bundle/release/
+          releaseDirectory: build/app/outputs/apk/release/
           signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE_FILE_BASE64 }}
           alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
