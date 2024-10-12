@@ -12,6 +12,7 @@ import 'package:xpenses/database/person_payment_table.dart';
 import 'package:xpenses/database/tag_table.dart';
 import 'package:xpenses/models/expense_model.dart';
 import 'package:xpenses/models/installment_model.dart';
+import 'package:xpenses/models/pending_payment.dart';
 import 'package:xpenses/models/tag_model.dart';
 import 'package:xpenses/utils/money_utils.dart';
 import 'package:xpenses/utils/month.dart';
@@ -185,5 +186,29 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
     return query
         .map((row) => MoneyUtils.fromCents(row.read(totalValue) ?? 0))
         .watchSingle();
+  }
+
+  @override
+  Stream<List<PendingPayment>> watchPendingPayments(DateTime until) {
+    //TODO: remove installments already paid
+    final sum = personPartTable.valueCents.sum();
+    final query = select(personPartTable).join([
+      leftOuterJoin(
+        installmentTable,
+        installmentTable.id.equalsExp(personPartTable.installmentId),
+      ),
+    ])
+      ..where(installmentTable.date.isSmallerOrEqualValue(until))
+      ..addColumns([sum])
+      ..groupBy([personPartTable.name]);
+
+    return query.watch().map(
+          (rows) => rows
+              .map((row) => PendingPayment(
+                    name: row.read(personPartTable.name)!,
+                    value: MoneyUtils.fromCents(row.read(sum)!),
+                  ))
+              .toList(),
+        );
   }
 }

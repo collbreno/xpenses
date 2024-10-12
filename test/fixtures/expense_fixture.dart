@@ -78,6 +78,59 @@ class ExpenseFixture {
     tags: [],
   );
 
+  late final expenseWithPersonMultipleTimes = Expense(
+    id: 0,
+    title: 'Compra 1',
+    description: 'Descrição da compra 1',
+    createdAt: DateTime(2024, 10, 5),
+    updatedAt: DateTime(2024, 10, 5),
+    installments: [
+      Installment(
+        id: 0,
+        value: MoneyUtils.fromCents(3500),
+        date: DateTime(2024, 10, 3),
+        index: 0,
+        personParts: [
+          PersonPart(
+            id: 0,
+            value: MoneyUtils.fromCents(1000),
+            name: 'Pessoa 1',
+          ),
+        ],
+        expense: null,
+      ),
+      Installment(
+        id: 0,
+        value: MoneyUtils.fromCents(3500),
+        date: DateTime(2024, 11, 3),
+        index: 1,
+        personParts: [
+          PersonPart(
+            id: 0,
+            value: MoneyUtils.fromCents(1000),
+            name: 'Pessoa 1',
+          ),
+        ],
+        expense: null,
+      ),
+      Installment(
+        id: 0,
+        value: MoneyUtils.fromCents(3500),
+        date: DateTime(2024, 12, 3),
+        index: 2,
+        personParts: [
+          PersonPart(
+            id: 0,
+            value: MoneyUtils.fromCents(1000),
+            name: 'Pessoa 1',
+          ),
+        ],
+        expense: null,
+      ),
+    ],
+    tags: [],
+  );
+
   late final expenseWithInstallments = Expense(
     id: 0,
     title: 'Compra 1',
