@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/icon_map.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:xpenses/utils/focus_utils.dart';
+import 'package:xpenses/utils/string_utils.dart';
 import 'package:xpenses/widgets/picker_dialog.dart';
 
 class IconFormField extends FormField<String> {
@@ -15,7 +16,7 @@ class IconFormField extends FormField<String> {
             return Builder(
               builder: (context) {
                 return ListTile(
-                  trailing: state.value!.isEmpty
+                  trailing: state.value.isNullOrEmpty
                       ? null
                       : IconButton(
                           icon: const Icon(Icons.close),
@@ -48,19 +49,19 @@ class IconFormField extends FormField<String> {
                     onChanged?.call(result);
                   },
                   title: InputDecorator(
-                    isEmpty: state.value == null,
+                    isEmpty: state.value.isNullOrEmpty,
                     decoration: InputDecoration(
                       icon: Icon(MdiIcons.stickerEmoji),
                       border: const OutlineInputBorder(),
                       hintText: 'Insira o ícone',
                       labelText: 'Ícone',
                       errorText: state.errorText,
-                      prefixIcon: state.value == null
+                      prefixIcon: state.value.isNullOrEmpty
                           ? null
                           : Icon(iconMap[state.value]),
                       suffixIcon: const Icon(Icons.arrow_drop_down),
                     ),
-                    child: state.value!.isEmpty
+                    child: state.value.isNullOrEmpty
                         ? null
                         : FittedBox(
                             fit: BoxFit.scaleDown,
