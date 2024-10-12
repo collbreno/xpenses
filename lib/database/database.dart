@@ -36,6 +36,15 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
   }
 
   @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      beforeOpen: (details) async {
+        await customStatement('PRAGMA foreign_keys = ON;');
+      },
+    );
+  }
+
+  @override
   Future<List<Tag>> getAllTags() async {
     final entries = await select(tagTable).get();
     return entries.map((e) => Tag.fromTable(e)).toList();
