@@ -13,7 +13,7 @@ class InstallmentList extends StatelessWidget {
         final installment = installments[index];
         return ListTile(
           dense: true,
-          title: Text(_getInstallmentTitle(installment)),
+          title: Text(installment.expense!.title),
           leading: Text('${installment.date.day.toString().padLeft(2, '0')}'
               '/${installment.date.month.toString().padLeft(2)}'),
           trailing: Column(
@@ -32,10 +32,5 @@ class InstallmentList extends StatelessWidget {
         );
       },
     );
-  }
-
-  String _getInstallmentTitle(Installment installment) {
-    final title = installment.expense!.title;
-    return title;
   }
 }

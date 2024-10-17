@@ -79,7 +79,8 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
   Future<List<Installment>> getInstallments(Month month) async {
     final allInstallments = Subquery(select(installmentTable), 's');
 
-    final amount = allInstallments.ref(installmentTable.id).count();
+    final amount =
+        allInstallments.ref(installmentTable.id).count(distinct: true);
 
     final query = select(installmentTable).join([
       innerJoin(
@@ -98,6 +99,7 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
       ..where(
         installmentTable.date.isBetweenValues(month.firstDay, month.lastDay),
       )
+      ..orderBy([OrderingTerm.desc(installmentTable.date)])
       ..addColumns([amount])
       ..groupBy([installmentTable.expenseId]);
 
