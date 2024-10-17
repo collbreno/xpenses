@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_design_icons_flutter/icon_map.dart';
 import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/models/tag_model.dart';
+import 'package:xpenses/utils/string_validators.dart';
 import 'package:xpenses/widgets/form_fields/color_form_field.dart';
 import 'package:xpenses/widgets/form_fields/icon_form_field.dart';
 import 'package:xpenses/widgets/form_fields/string_form_field.dart';
@@ -84,6 +85,7 @@ class _TagFormPageState extends State<TagFormPage> {
           maxLines: 1,
           initialValue: _tag.name,
           label: 'Título',
+          validator: StringValidators.notEmpty(),
         ),
         ColorFormField(
           onChanged: (value) => setState(() {
