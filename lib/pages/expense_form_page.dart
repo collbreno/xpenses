@@ -4,6 +4,7 @@ import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/expense_generator.dart';
 import 'package:xpenses/models/expense_model.dart';
 import 'package:xpenses/pages/entity_form.dart';
+import 'package:xpenses/utils/string_validators.dart';
 import 'package:xpenses/widgets/form_fields/date_form_field.dart';
 import 'package:xpenses/widgets/form_fields/installments_form_field.dart';
 import 'package:xpenses/widgets/form_fields/people_form_field.dart';
@@ -52,6 +53,17 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
       //         widget.onSaved();
       //       },
       formFields: [
+        StringFormField(
+          maxLines: 1,
+          icon: const Icon(Icons.edit),
+          hint: 'Insira o título',
+          label: 'Título',
+          initialValue: _generator.title,
+          onSaved: (value) => setState(() {
+            _generator.title = value!;
+          }),
+          validator: StringValidators.notEmpty(),
+        ),
         ValueFormField(
           initialValue: _generator.value,
           onSaved: (value) => setState(() {
@@ -69,12 +81,12 @@ class _ExpenseFormPageState extends State<ExpenseFormPage> {
         ),
         StringFormField(
           maxLines: 3,
-          icon: const Icon(Icons.edit),
-          hint: 'Insira o título',
-          label: 'Título',
+          icon: const Icon(Icons.edit_document),
+          hint: 'Insira a descrição',
+          label: 'Descrição (Opcional)',
           initialValue: _generator.description,
           onSaved: (value) => setState(() {
-            _generator.title = value!;
+            _generator.description = value!;
           }),
         ),
         TagsFormField(

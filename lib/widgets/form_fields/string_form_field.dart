@@ -10,11 +10,8 @@ class StringFormField extends FormField<String> {
     String? label,
     Widget? icon,
     int maxLines = 1,
+    super.validator,
   }) : super(
-          validator: (value) {
-            if (value == null || value.isEmpty) return 'Não pode ser vazio';
-            return null;
-          },
           autovalidateMode: AutovalidateMode.onUserInteraction,
           builder: (state) {
             return Builder(builder: (context) {
