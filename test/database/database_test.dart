@@ -357,7 +357,7 @@ void main() {
 
     test('should sum and ignore installments after date', () async {
       final expense = expenseFix.expenseWithPersonMultipleTimes;
-      expense.tags.clear();
+      expense.tags!.clear();
       await db.addExpense(expense);
 
       final date = expense.installments![1].date.monthYear.lastDay;

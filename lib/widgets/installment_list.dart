@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xpenses/go_router_builder.dart';
 import 'package:xpenses/models/installment_model.dart';
 
 class InstallmentList extends StatelessWidget {
@@ -12,6 +13,9 @@ class InstallmentList extends StatelessWidget {
       itemBuilder: (context, index) {
         final installment = installments[index];
         return ListTile(
+          onTap: () {
+            ExpenseDetailsRoute(installment.expense!.id).push(context);
+          },
           dense: true,
           title: Text(installment.expense!.title),
           leading: Text('${installment.date.day.toString().padLeft(2, '0')}'

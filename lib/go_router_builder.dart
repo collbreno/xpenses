@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
+import 'package:xpenses/bloc/expense_cubit.dart';
 import 'package:xpenses/bloc/installments_cubit.dart';
 import 'package:xpenses/database/i_database.dart';
 import 'package:xpenses/models/tag_model.dart';
+import 'package:xpenses/pages/expense_details_page.dart';
 import 'package:xpenses/pages/expense_form_page.dart';
 import 'package:xpenses/pages/home_page.dart';
 import 'package:xpenses/pages/installments_page.dart';
@@ -20,6 +22,7 @@ part 'go_router_builder.g.dart';
   TypedGoRoute<ExpenseFormRoute>(path: 'expense_form'),
   TypedGoRoute<TagListRoute>(path: 'tag_list'),
   TypedGoRoute<InstallmentsRoute>(path: 'installments'),
+  TypedGoRoute<ExpenseDetailsRoute>(path: 'expense_details'),
 ])
 @immutable
 class HomeRoute extends GoRouteData {
@@ -87,6 +90,22 @@ class InstallmentsRoute extends GoRouteData {
         context.read<IAppDatabase>(),
       )..loadRange(),
       child: const InstallmentsPage(),
+    );
+  }
+}
+
+@immutable
+class ExpenseDetailsRoute extends GoRouteData {
+  final int id;
+  const ExpenseDetailsRoute(this.id);
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return BlocProvider(
+      create: (context) => ExpenseCubit(
+        db: context.read<IAppDatabase>(),
+        id: id,
+      )..load(),
+      child: const ExpenseDetailsPage(),
     );
   }
 }

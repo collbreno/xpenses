@@ -11,7 +11,7 @@ class Expense {
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<Installment>? installments;
-  final List<Tag> tags;
+  final List<Tag>? tags;
 
   DateTime? get firstDate => installments?.first.date;
   Money? get totalValue =>
@@ -31,12 +31,11 @@ class Expense {
 
   Expense.fromTable(
     ExpenseEntry entry, {
-    required Iterable<TagEntry> tagEntries,
+    this.tags,
+    this.installments,
   })  : id = entry.id,
         title = entry.title,
         description = entry.description,
         createdAt = entry.createdAt,
-        updatedAt = entry.updatedAt,
-        tags = tagEntries.map(Tag.fromTable).toList(),
-        installments = null;
+        updatedAt = entry.updatedAt;
 }

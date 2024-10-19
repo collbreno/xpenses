@@ -37,7 +37,5 @@ class Installment {
         date = entry.date,
         index = entry.index,
         personParts = personPartEntries.map(PersonPart.fromTable).toList(),
-        expense = expenseEntry != null
-            ? Expense.fromTable(expenseEntry, tagEntries: [])
-            : null;
+        expense = expenseEntry != null ? Expense.fromTable(expenseEntry) : null;
 }

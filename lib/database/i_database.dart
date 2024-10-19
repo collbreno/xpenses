@@ -15,4 +15,5 @@ abstract class IAppDatabase {
   Future<int> addExpense(Expense model);
   Future<DateTimeRange> getExpensesDateTimeRange();
   Stream<List<PendingPayment>> watchPendingPayments(DateTime until);
+  Stream<Expense> watchExpense(int id);
 }

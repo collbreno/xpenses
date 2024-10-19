@@ -131,7 +131,7 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
 
     final expenseId = await into(expenseTable).insert(expense);
 
-    await Future.forEach(model.tags, (t) async {
+    await Future.forEach(model.tags!, (t) async {
       final expenseTag = ExpenseTagsTableCompanion(
         expenseId: Value(expenseId),
         tagId: Value(t.id),
@@ -212,5 +212,56 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
                   ))
               .toList(),
         );
+  }
+
+  @override
+  Stream<Expense> watchExpense(int id) {
+    final query = select(expenseTable).join([
+      innerJoin(
+        installmentTable,
+        installmentTable.expenseId.equalsExp(expenseTable.id),
+      ),
+      leftOuterJoin(
+        personPartTable,
+        personPartTable.installmentId.equalsExp(installmentTable.id),
+      ),
+      leftOuterJoin(
+        expenseTagsTable,
+        expenseTagsTable.expenseId.equalsExp(expenseTable.id),
+      ),
+      leftOuterJoin(
+        tagTable,
+        tagTable.id.equalsExp(expenseTagsTable.tagId),
+      ),
+    ])
+      ..where(expenseTable.id.equals(id));
+
+    return query.watch().map((rows) {
+      final tags = rows
+          .map(
+            (row) => row.readTableOrNull(tagTable),
+          )
+          .nonNulls
+          .toSet();
+      final groupedByInstallments = rows.groupListsBy(
+        (e) => e.readTable(installmentTable),
+      );
+      final installments = groupedByInstallments.entries.map((entry) {
+        return Installment.fromTable(
+          entry.key,
+          personPartEntries: entry.value
+              .map(
+                (e) => e.readTableOrNull(personPartTable),
+              )
+              .nonNulls
+              .toSet(),
+        );
+      });
+      return Expense.fromTable(
+        rows.first.readTable(expenseTable),
+        tags: tags.map(Tag.fromTable).toList(),
+        installments: installments.toList(),
+      );
+    });
   }
 }
