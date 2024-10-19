@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/material.dart' hide Table;
-import 'package:money2/src/money.dart';
+import 'package:money2/money2.dart';
 import 'package:xpenses/database/expense_table.dart';
 import 'package:xpenses/database/expense_tags_table.dart';
 import 'package:xpenses/database/i_database.dart';
@@ -14,6 +14,7 @@ import 'package:xpenses/models/expense_model.dart';
 import 'package:xpenses/models/installment_model.dart';
 import 'package:xpenses/models/pending_payment.dart';
 import 'package:xpenses/models/tag_model.dart';
+import 'package:xpenses/utils/exceptions.dart';
 import 'package:xpenses/utils/money_utils.dart';
 import 'package:xpenses/utils/month.dart';
 
@@ -263,5 +264,26 @@ class AppDatabase extends _$AppDatabase implements IAppDatabase {
         installments: installments.toList(),
       );
     });
+  }
+
+  @override
+  Future<void> deleteExpense(int id) async {
+    final query = delete(expenseTable)..where((e) => e.id.equals(id));
+    final installmentsQuery = delete(installmentTable)
+      ..where((e) => e.expenseId.equals(id));
+    final expenseTagsQuery = delete(expenseTagsTable)
+      ..where((e) => e.expenseId.equals(id));
+    final allInstallmentsIds = selectOnly(installmentTable)
+      ..where(installmentTable.expenseId.equals(id))
+      ..addColumns([installmentTable.id]);
+    final personPartQuery = delete(personPartTable)
+      ..where((e) => e.installmentId.isInQuery(allInstallmentsIds));
+    await personPartQuery.go();
+    await installmentsQuery.go();
+    await expenseTagsQuery.go();
+    final deleted = await query.go();
+    if (deleted == 0) {
+      throw EntityNotFoundException();
+    }
   }
 }
