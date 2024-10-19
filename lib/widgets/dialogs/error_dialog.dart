@@ -13,7 +13,7 @@ class ErrorDialog extends StatelessWidget {
         children: [
           const Icon(Icons.warning_rounded, size: 36),
           const SizedBox(width: 24),
-          Text(error.toString()),
+          Expanded(child: Text(error.toString())),
         ],
       ),
       actions: [
