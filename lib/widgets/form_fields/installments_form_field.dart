@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money2/money2.dart';
+import 'package:xpenses/utils/focus_utils.dart';
 
 class InstallmentsFormField extends FormField<int> {
   InstallmentsFormField({
@@ -89,6 +90,7 @@ class InstallmentsFormField extends FormField<int> {
         borderWidth: 1,
         isSelected: [isAvista, !isAvista],
         onPressed: (index) {
+          FocusUtils.unfocus();
           if (index == 0) {
             state.didChange(1);
           } else {

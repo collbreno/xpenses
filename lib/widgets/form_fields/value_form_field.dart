@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money2/money2.dart';
+import 'package:xpenses/utils/focus_utils.dart';
 import 'package:xpenses/widgets/calculator.dart';
 
 class ValueFormField extends FormField<Money> {
@@ -22,6 +23,7 @@ class ValueFormField extends FormField<Money> {
                 leading: const Icon(Icons.attach_money),
                 title: InkWell(
                   onTap: () async {
+                    FocusUtils.unfocus();
                     final result = await showCalculator(context);
                     if (result != null) {
                       state.didChange(result);

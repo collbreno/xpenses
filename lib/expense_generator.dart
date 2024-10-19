@@ -39,7 +39,7 @@ class ExpenseGenerator {
         updatedAt = DateTime.now(),
         value = expense.totalValue!,
         nInstallments = expense.installments!.length,
-        tags = expense.tags,
+        tags = expense.tags!,
         personParts = expense.installments!
             .fold(<PersonPart>[], (acc, e) => acc + e.personParts)
             .groupListsBy((e) => e.name)

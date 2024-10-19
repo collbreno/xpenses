@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:money2/money2.dart';
 import 'package:xpenses/enums/division_type.dart';
 import 'package:xpenses/models/person_part_model.dart';
+import 'package:xpenses/utils/focus_utils.dart';
 import 'package:xpenses/utils/money_utils.dart';
 import 'package:xpenses/widgets/calculator.dart';
 import 'package:xpenses/widgets/input_dialog.dart';
@@ -75,6 +76,7 @@ class PeopleFormField extends FormField<Iterable<PersonPart>> {
             flex: 3,
             child: InkWell(
               onTap: () async {
+                FocusUtils.unfocus();
                 final name = await showInputDialog(
                   context: context,
                   title: 'Insira o nome',
@@ -101,6 +103,7 @@ class PeopleFormField extends FormField<Iterable<PersonPart>> {
             flex: 2,
             child: InkWell(
               onTap: () async {
+                FocusUtils.unfocus();
                 final newValue = await showCalculator(context);
                 if (newValue != null) {
                   final newList = list.toList();
@@ -124,6 +127,7 @@ class PeopleFormField extends FormField<Iterable<PersonPart>> {
       trailing: IconButton(
         icon: const Icon(Icons.cancel),
         onPressed: () {
+          FocusUtils.unfocus();
           final newList = list.toList();
           newList.removeAt(index);
           state.didChange(newList);
@@ -165,6 +169,7 @@ class PeopleFormField extends FormField<Iterable<PersonPart>> {
     return IconButton(
       key: const ValueKey('add_button'),
       onPressed: () async {
+        FocusUtils.unfocus();
         final name = await showInputDialog(
           context: context,
           title: 'Insira o nome',
@@ -187,6 +192,7 @@ class PeopleFormField extends FormField<Iterable<PersonPart>> {
     final list = state.value!;
     return IconButton(
       onPressed: () async {
+        FocusUtils.unfocus();
         final divisionType = await _showDivisionDialog(context);
         if (divisionType != null) {
           final count = divisionType == DivisionType.includeMe

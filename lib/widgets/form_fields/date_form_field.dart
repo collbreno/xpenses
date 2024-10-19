@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpenses/constants.dart';
+import 'package:xpenses/utils/focus_utils.dart';
 
 class DateFormField extends FormField<DateTime> {
   DateFormField({
@@ -16,6 +17,7 @@ class DateFormField extends FormField<DateTime> {
             return Builder(builder: (context) {
               return ListTile(
                 onTap: () async {
+                  FocusUtils.unfocus();
                   final result = await showDatePicker(
                     context: context,
                     firstDate: DateTime(2020),

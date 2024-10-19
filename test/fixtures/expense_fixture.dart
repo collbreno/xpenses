@@ -26,6 +26,25 @@ class ExpenseFixture {
     tags: [],
   );
 
+  late final expense2 = Expense(
+    id: 0,
+    title: 'Compra 2',
+    description: 'Descrição da compra 2',
+    createdAt: DateTime(2024, 9, 7),
+    updatedAt: DateTime(2024, 9, 7),
+    installments: [
+      Installment(
+        id: 0,
+        value: MoneyUtils.fromCents(4200),
+        date: DateTime(2024, 9, 3),
+        index: 0,
+        personParts: [],
+        expense: null,
+      ),
+    ],
+    tags: [],
+  );
+
   late final expenseWithTags = Expense(
     id: 0,
     title: 'Compra 1',

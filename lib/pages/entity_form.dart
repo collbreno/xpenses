@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:xpenses/utils/focus_utils.dart';
 import 'package:xpenses/utils/type_utils.dart';
+import 'package:xpenses/widgets/dialogs/error_dialog.dart';
 
 class EntityForm extends StatefulWidget {
   final List<Widget> formFields;
@@ -122,6 +123,7 @@ class _EntityFormState<T> extends State<EntityForm> {
           setState(() {
             _isLoading = false;
           });
+          showErrorDialog(context, error: e);
         }
         rethrow;
       }
