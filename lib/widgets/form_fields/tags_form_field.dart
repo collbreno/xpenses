@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:xpenses/bloc/entity_list_cubit.dart';
 import 'package:xpenses/models/tag_model.dart';
 import 'package:xpenses/utils/async_data.dart';
+import 'package:xpenses/utils/focus_utils.dart';
 import 'package:xpenses/widgets/picker_dialog.dart';
 import 'package:xpenses/widgets/tag_chip.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -22,6 +23,7 @@ class TagsFormField extends FormField<Iterable<Tag>> {
                   onTap: !cubitState.hasData
                       ? null
                       : () async {
+                          FocusUtils.unfocus();
                           final result = await showMultiPickerDialog(
                             props: PickerDialogProps<Tag>(
                               checkPosition: Alignment.centerRight,
